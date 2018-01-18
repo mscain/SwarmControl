@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SwarmDrone : MonoBehaviour{
     #region Variables
+    public Vector3 flockingControlVector; //magnitude controls speed, direction controls turning
+
     public bool isControlledBySwarm = true;
     public float fwdControl, turnControl;
     public List<WheelCollider> wheelsR, wheelsL;
@@ -35,7 +37,16 @@ public class SwarmDrone : MonoBehaviour{
     /// Sets fwdControl and turnContol based on flocking algorithm.
     /// </summary>
     void FlockingControl(){
-        //
+        flockingControlVector = Vector3.ClampMagnitude(flockingControlVector, 1);
+        Debug.DrawRay(transform.position, flockingControlVector * 5);
+
+        float fwdSpeedControl = Vector3.Dot(transform.forward, flockingControlVector.normalized); //Slows us down for turns
+        fwdControl = (flockingControlVector.magnitude * fwdSpeedControl + flockingControlVector.magnitude)/2f;
+
+        float turnSpeedControl = Mathf.Deg2Rad * Vector3.Angle(transform.forward, flockingControlVector); //Turns faster the larger the angle is, slows down as we approach desired heading
+        float turnDirectionControl = Vector3.Dot(transform.right, flockingControlVector.normalized);
+        turnDirectionControl = turnDirectionControl / Mathf.Abs(turnDirectionControl + 0.01f); //Decides which direction we should be turning
+        turnControl = turnDirectionControl * turnSpeedControl;
     }
 
 

@@ -770,6 +770,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fd471a8ee3c0d6438b3fcbb1a3fe62f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  flockingControlVector: {x: 0, y: 0, z: 0}
   isControlledBySwarm: 1
   fwdControl: 0
   turnControl: 0
