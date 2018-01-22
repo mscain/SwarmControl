@@ -770,10 +770,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1fd471a8ee3c0d6438b3fcbb1a3fe62f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  flockingControlVector: {x: 0, y: 0, z: 0}
   isControlledBySwarm: 1
+  updateFrequency: 10
   fwdControl: 0
   turnControl: 0
+  moveVector: {x: 0, y: 0, z: 0}
   wheelsR:
   - {fileID: 146557567705723028}
   - {fileID: 146397426771481354}
@@ -783,10 +784,9 @@ MonoBehaviour:
   - {fileID: 146224940186986804}
   - {fileID: 146265041725111694}
   headTexture: {fileID: 23915474826714800}
-  maxMoveSpeed: 20
-  kick: 20
-  acceleration: 50
+  speed: 50
   turnSpeed: 5
+  turnSharpness: 0.7
 --- !u!135 &135931643010216218
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -868,17 +868,17 @@ WheelCollider:
   m_Mass: 0.25
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
-    m_ExtremumSlip: 0.27
-    m_ExtremumValue: 0.84
-    m_AsymptoteSlip: 0.61
-    m_AsymptoteValue: 0.34
+    m_ExtremumSlip: 0.4
+    m_ExtremumValue: 0.8
+    m_AsymptoteSlip: 0.8
+    m_AsymptoteValue: 0.3
     m_Stiffness: 0.8
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 0.4
+    m_Stiffness: 0.7
   m_Enabled: 1
 --- !u!146 &146265041725111694
 WheelCollider:
@@ -897,17 +897,17 @@ WheelCollider:
   m_Mass: 0.25
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
-    m_ExtremumSlip: 0.27
-    m_ExtremumValue: 0.84
-    m_AsymptoteSlip: 0.61
-    m_AsymptoteValue: 0.34
+    m_ExtremumSlip: 0.4
+    m_ExtremumValue: 0.8
+    m_AsymptoteSlip: 0.8
+    m_AsymptoteValue: 0.3
     m_Stiffness: 0.8
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 0.4
+    m_Stiffness: 0.7
   m_Enabled: 1
 --- !u!146 &146397426771481354
 WheelCollider:
@@ -926,17 +926,17 @@ WheelCollider:
   m_Mass: 0.25
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
-    m_ExtremumSlip: 0.27
-    m_ExtremumValue: 0.84
-    m_AsymptoteSlip: 0.61
-    m_AsymptoteValue: 0.34
+    m_ExtremumSlip: 0.4
+    m_ExtremumValue: 0.8
+    m_AsymptoteSlip: 0.8
+    m_AsymptoteValue: 0.3
     m_Stiffness: 0.8
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 0.4
+    m_Stiffness: 0.7
   m_Enabled: 1
 --- !u!146 &146557567705723028
 WheelCollider:
@@ -955,17 +955,17 @@ WheelCollider:
   m_Mass: 0.25
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
-    m_ExtremumSlip: 0.27
-    m_ExtremumValue: 0.84
-    m_AsymptoteSlip: 0.61
-    m_AsymptoteValue: 0.34
+    m_ExtremumSlip: 0.4
+    m_ExtremumValue: 0.8
+    m_AsymptoteSlip: 0.8
+    m_AsymptoteValue: 0.3
     m_Stiffness: 0.8
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 0.4
+    m_Stiffness: 0.7
   m_Enabled: 1
 --- !u!146 &146828164674315198
 WheelCollider:
@@ -984,17 +984,17 @@ WheelCollider:
   m_Mass: 0.25
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
-    m_ExtremumSlip: 0.27
-    m_ExtremumValue: 0.84
-    m_AsymptoteSlip: 0.61
-    m_AsymptoteValue: 0.34
+    m_ExtremumSlip: 0.4
+    m_ExtremumValue: 0.8
+    m_AsymptoteSlip: 0.8
+    m_AsymptoteValue: 0.3
     m_Stiffness: 0.8
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 0.4
+    m_Stiffness: 0.7
   m_Enabled: 1
 --- !u!146 &146994482779208140
 WheelCollider:
@@ -1013,15 +1013,15 @@ WheelCollider:
   m_Mass: 0.25
   m_WheelDampingRate: 0.25
   m_ForwardFriction:
-    m_ExtremumSlip: 0.27
-    m_ExtremumValue: 0.84
-    m_AsymptoteSlip: 0.61
-    m_AsymptoteValue: 0.34
+    m_ExtremumSlip: 0.4
+    m_ExtremumValue: 0.8
+    m_AsymptoteSlip: 0.8
+    m_AsymptoteValue: 0.3
     m_Stiffness: 0.8
   m_SidewaysFriction:
     m_ExtremumSlip: 0.2
     m_ExtremumValue: 1
     m_AsymptoteSlip: 0.5
     m_AsymptoteValue: 0.75
-    m_Stiffness: 0.4
+    m_Stiffness: 0.7
   m_Enabled: 1
