@@ -122,7 +122,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1.541
+      value: 0.38
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -130,7 +130,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 5.434
+      value: 1.0380001
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -150,34 +150,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 10
+      value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_Name
       value: SwarmDrone (8)
       objectReference: {fileID: 0}
-    - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -296.013
-      objectReference: {fileID: 0}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -275,7 +261,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4122008608692092, guid: 6395639d58899f94cbf1a44c13e5fe32, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.294
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4122008608692092, guid: 6395639d58899f94cbf1a44c13e5fe32, type: 2}
       propertyPath: m_LocalPosition.y
@@ -283,7 +269,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4122008608692092, guid: 6395639d58899f94cbf1a44c13e5fe32, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 6.9844904
+      value: 2.65
       objectReference: {fileID: 0}
     - target: {fileID: 4122008608692092, guid: 6395639d58899f94cbf1a44c13e5fe32, type: 2}
       propertyPath: m_LocalRotation.x
@@ -305,14 +291,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1572942702411860, guid: 6395639d58899f94cbf1a44c13e5fe32, type: 2}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1663753169928604, guid: 6395639d58899f94cbf1a44c13e5fe32, type: 2}
-      propertyPath: m_Layer
-      value: 10
-      objectReference: {fileID: 0}
+    - target: {fileID: 114160662929049322, guid: 6395639d58899f94cbf1a44c13e5fe32,
+        type: 2}
+      propertyPath: goalBall
+      value: 
+      objectReference: {fileID: 1546533715}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6395639d58899f94cbf1a44c13e5fe32, type: 2}
   m_IsPrefabParent: 0
@@ -409,7 +392,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.02
+      value: -0.09899998
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -417,7 +400,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 4.021
+      value: -0.375
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -437,34 +420,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 7
+      value: 9
       objectReference: {fileID: 0}
+    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_Name
       value: SwarmDrone (5)
       objectReference: {fileID: 0}
-    - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -188.271
-      objectReference: {fileID: 0}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -562,7 +531,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1.83
+      value: 0.09099996
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -570,7 +539,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 4.988
+      value: 0.592
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -590,34 +559,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_Name
       value: SwarmDrone (3)
       objectReference: {fileID: 0}
-    - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -241.359
-      objectReference: {fileID: 0}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -967,15 +922,15 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.0330164
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0.0833
+      value: 0.035
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 4.574
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -995,7 +950,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -1261,7 +1216,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1.451
+      value: 0.47
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -1269,7 +1224,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 3.936
+      value: -0.46
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -1289,34 +1244,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 6
+      value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_Name
       value: SwarmDrone (4)
       objectReference: {fileID: 0}
-    - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -143.84901
-      objectReference: {fileID: 0}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -1954,7 +1895,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.972
+      value: -1.0509999
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -1962,7 +1903,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 5.359
+      value: 0.9630003
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -1982,34 +1923,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_Name
-      value: SwarmDrone (6)
-      objectReference: {fileID: 0}
-    - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -110.240005
-      objectReference: {fileID: 0}
-    - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
       value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
         type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
+    - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
+      propertyPath: m_Name
+      value: SwarmDrone (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -2023,7 +1950,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1.449
+      value: 0.472
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -2031,7 +1958,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 4.724
+      value: 0.32800007
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -2051,34 +1978,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 11
+      value: 13
       objectReference: {fileID: 0}
+    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_Name
       value: SwarmDrone (9)
       objectReference: {fileID: 0}
-    - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -150.44801
-      objectReference: {fileID: 0}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -2167,6 +2080,144 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 723522111}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1001 &756216662
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 2.38
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -5.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalScale.x
+      value: 0.39805833
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalScale.y
+      value: 0.39805838
+      objectReference: {fileID: 0}
+    - target: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+      propertyPath: m_LocalScale.z
+      value: 0.39805835
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: c42ea3408aac68c4588a1d88e04d397e, type: 2}
+  m_IsPrefabParent: 0
+--- !u!1 &762774458
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 762774462}
+  - component: {fileID: 762774461}
+  - component: {fileID: 762774460}
+  - component: {fileID: 762774459}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &762774459
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 762774458}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: 4478f24cc3acf374b92a892c0ada83a4, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!65 &762774460
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 762774458}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &762774461
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 762774458}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &762774462
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 762774458}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.12, z: -5.8}
+  m_LocalScale: {x: 3.2513316, y: 2.375413, z: 3.6956835}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &791442887
 GameObject:
   m_ObjectHideFlags: 0
@@ -2419,6 +2470,20 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 808428312}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &822661524
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 4218451974874128, guid: c42ea3408aac68c4588a1d88e04d397e,
+    type: 2}
+  m_PrefabInternal: {fileID: 756216662}
+  m_GameObject: {fileID: 1546533715}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.38, z: -5.8}
+  m_LocalScale: {x: 0.39805833, y: 0.39805838, z: 0.39805835}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &834675660
 GameObject:
   m_ObjectHideFlags: 0
@@ -3339,7 +3404,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.651
+      value: -0.73
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -3347,7 +3412,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 4.351
+      value: -0.045000076
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -3367,34 +3432,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_Name
       value: SwarmDrone (2)
       objectReference: {fileID: 0}
-    - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -425.104
-      objectReference: {fileID: 0}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -4220,6 +4271,67 @@ MeshFilter:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1535448725}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1546533715
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 1696926518578964, guid: c42ea3408aac68c4588a1d88e04d397e,
+    type: 2}
+  m_PrefabInternal: {fileID: 756216662}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 822661524}
+  - component: {fileID: 1546533717}
+  - component: {fileID: 1546533716}
+  m_Layer: 0
+  m_Name: GoalBall
+  m_TagString: GoalBall
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &1546533716
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 23179293481606556, guid: c42ea3408aac68c4588a1d88e04d397e,
+    type: 2}
+  m_PrefabInternal: {fileID: 756216662}
+  m_GameObject: {fileID: 1546533715}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_Materials:
+  - {fileID: 2100000, guid: a2afd246d20d2bd46b2bb3ce8f0e52f6, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!33 &1546533717
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 33516983267618600, guid: c42ea3408aac68c4588a1d88e04d397e,
+    type: 2}
+  m_PrefabInternal: {fileID: 756216662}
+  m_GameObject: {fileID: 1546533715}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1620987817
 GameObject:
   m_ObjectHideFlags: 0
@@ -4817,7 +4929,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.476
+      value: -0.55500007
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -4825,7 +4937,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 4.857
+      value: 0.46099997
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -4845,26 +4957,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_Name
       value: SwarmDrone (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
+    - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
@@ -4878,7 +4984,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -2.367
+      value: -0.4460001
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.y
@@ -4886,7 +4992,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 5.525
+      value: 1.1290002
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_LocalRotation.x
@@ -4906,34 +5012,20 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_RootOrder
-      value: 9
+      value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
+        type: 2}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 822661524}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_Name
       value: SwarmDrone (7)
       objectReference: {fileID: 0}
-    - target: {fileID: 4091048890569660, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: -494.75702
-      objectReference: {fileID: 0}
     - target: {fileID: 1214114111015826, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}
       propertyPath: m_IsActive
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: updateFrequency
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: scanRadius
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 114149422382728248, guid: 7957ea357c1474a43807f70e32dace2c,
-        type: 2}
-      propertyPath: repulsionForce
-      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7957ea357c1474a43807f70e32dace2c, type: 2}

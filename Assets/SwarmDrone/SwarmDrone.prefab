@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4251526238705520}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Treads L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35,7 +35,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4313612281758782}
   - component: {fileID: 146224940186986804}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Wheel M
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -53,7 +53,7 @@ GameObject:
   - component: {fileID: 33911221175084386}
   - component: {fileID: 23300667114571680}
   - component: {fileID: 146557567705723028}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Wheel F
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 33376147453189276}
   - component: {fileID: 23420052601821202}
   - component: {fileID: 146265041725111694}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Wheel B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 33784064456558696}
   - component: {fileID: 23702489270473672}
   - component: {fileID: 136115031634120728}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Treads
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 4091048890569660}
   - component: {fileID: 54826756989257162}
   - component: {fileID: 114149422382728248}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: SwarmDrone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -121,7 +121,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4116903161408964}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Treads R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 33007416150098778}
   - component: {fileID: 23190298420671304}
   - component: {fileID: 136009426290592192}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Treads
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -157,7 +157,7 @@ GameObject:
   - component: {fileID: 33656927599315248}
   - component: {fileID: 23902308631690308}
   - component: {fileID: 146828164674315198}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Wheel F
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 136252105161304592}
   - component: {fileID: 136137940540062850}
   - component: {fileID: 23170991129659850}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -212,7 +212,7 @@ GameObject:
   - component: {fileID: 33019940539930122}
   - component: {fileID: 23201254295509706}
   - component: {fileID: 146994482779208140}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Wheel B
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +228,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4410630441843104}
   - component: {fileID: 146397426771481354}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Wheel M
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -268,7 +268,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1214114111015826}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.0330164, y: 0.0833, z: 4.574}
+  m_LocalPosition: {x: 0, y: 0.035, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4697062171837286}
@@ -277,7 +277,7 @@ Transform:
   - {fileID: 4251526238705520}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 161.79901, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -150.44801, z: 0}
 --- !u!4 &4116903161408964
 Transform:
   m_ObjectHideFlags: 1
@@ -772,15 +772,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isControlledBySwarm: 1
   updateFrequency: 30
-  proxMult: 1
+  proxMult: 0.3
   alignMult: 1
   goalMult: 1
   scanRadius: 10
   swarmSpread: 1
-  repulsionForce: 0.1
+  swarmSpreadTolerance: 0.4
+  repulsionForce: 0.5
   fwdControl: 0
   turnControl: 0
-  moveVector: {x: 0, y: 0, z: 0}
+  botMoveVector: {x: 0, y: 0, z: 0}
+  head: {fileID: 1719117026230118}
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 4294961151
   wheelsR:
   - {fileID: 146557567705723028}
   - {fileID: 146397426771481354}

@@ -155,7 +155,7 @@ GameObject:
   - component: {fileID: 4174822065157308}
   - component: {fileID: 33696657043752708}
   - component: {fileID: 23768983773631708}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: JetSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 4802431353753176}
   - component: {fileID: 198663031494937086}
   - component: {fileID: 199196812550149132}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Particle System
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -327,7 +327,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1922480750672298}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -2.294, y: 0.888, z: 6.9844904}
+  m_LocalPosition: {x: 0, y: 0.888, z: 2.65}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4782864537011890}
@@ -942,11 +942,12 @@ MonoBehaviour:
   jetBall: {fileID: 1572942702411860}
   aimRayLayerMask:
     serializedVersion: 2
-    m_Bits: 4294966527
+    m_Bits: 4294965503
   jetParticles: {fileID: 198663031494937086}
   cannon: {fileID: 1844029763280862}
   barrel: {fileID: 1326941861528930}
   laser: {fileID: 1717180609469016}
+  goalBall: {fileID: 0}
   script: {fileID: 114737702918146044, guid: 967d1b3727308ca41a79b8bcca63925d, type: 2}
   script2: {fileID: 114616341492738858, guid: 087f43b18b19794439a29c3f9ebf25ca, type: 2}
   glidey: 0
@@ -995,28 +996,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3931248f4e21803438eab67272b7dfa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  holder: {fileID: 1110948818124810}
   drone: {fileID: 1922480750672298}
   cannon: {fileID: 1844029763280862}
-  barrel: {fileID: 1326941861528930}
   droneS: {fileID: 114160662929049322}
   sensitivity: 0.4
   lookSpeed: 1
   lookFactor: 1
   turnUpBound: 90
-  turnRightBound: 75
-  currentTargetCameraAngle: 60
   aimSensitivity: 1
   smoothY: 0
   smoothX: 0
-  smoothForceTurn: 0
   turnedY: 0
   turnedY2: 0
   turnedX: 0
   turnedX2: 0
-  turnedXSpine: 0
-  turnedXSpine2: 0
-  turnedXSpineLate: 0
   X: 1
   Y: 1
 --- !u!124 &124377691609635806
