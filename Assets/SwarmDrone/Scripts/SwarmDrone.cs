@@ -55,6 +55,7 @@ public class SwarmDrone : MonoBehaviour {
             botMoveVector = flockingControlVector;
     }
 
+    //TODO Multiply by how fast they are moving towards each other?
     private Vector3 CalcProximalControl() {
         Vector3 proxVec = Vector3.zero;
 
@@ -93,7 +94,7 @@ public class SwarmDrone : MonoBehaviour {
         Vector3 origin = transform.position;
         Vector3 fwd = transform.forward;
         float rayDist = _rb.velocity.magnitude * 0.3f + 0.2f;
-        const float fMul = 5;
+        const float fMul = 10;
         const float tMul = 10;
         Vector3 right = transform.right;
         Vector3 targetVec = Vector3.ClampMagnitude(_target.position - transform.position, 1);
@@ -108,18 +109,18 @@ public class SwarmDrone : MonoBehaviour {
         }
 
         if(Physics.Raycast(origin, -fwd, out hit, 0.1f, layerMask)) { //Back
-            int dirMult = ((int) Time.time) % 6 < 3 ? 1 : -1;
+            int dirMult = (int) Time.time % 6 < 3 ? 1 : -1;
             goalVec += fwd * 0.4f + dirMult * right;
 
             if(debug) Debug.DrawRay(origin, -fwd * 0.1f, Color.yellow); //Back
         } else if(Physics.Raycast(origin, fwd + right * .5f, out hit, rayDist * .8f, layerMask)) { //Diag Right
             Vector3 diff = transform.position - hit.point;
             diff *= Vector3.Dot(diff, -fwd);
-            float distMult = Lerp(fMul, .1f, diff.sqrMagnitude);
+            float distMult = Lerp(fMul, fMul / 4, diff.sqrMagnitude);
             float turnMult = Lerp(tMul / 3, tMul, diff.sqrMagnitude);
             Vector3 turnVec = Vector3.Cross(transform.up, hit.normal);
             goalVec += hit.normal * distMult + turnVec * turnMult;
-            if(Vector3.Dot(targetVec, fwd) < -.5f) goalVec += turnVec * turnMult * 100 + targetVec;
+            if(Vector3.Dot(targetVec, fwd) < -.5f) goalVec += targetVec;
 
             if(!debug) return goalVec;
             Debug.DrawRay(origin, (fwd + right * .5f) * rayDist, Color.yellow); //Diag Right
@@ -128,11 +129,11 @@ public class SwarmDrone : MonoBehaviour {
         } else if(Physics.Raycast(origin, fwd - right * .5f, out hit, rayDist * .8f, layerMask)) { //Diag Left
             Vector3 diff = transform.position - hit.point;
             diff *= Vector3.Dot(diff, -fwd);
-            float distMult = Lerp(fMul, .1f, diff.sqrMagnitude);
+            float distMult = Lerp(fMul, fMul / 4, diff.sqrMagnitude);
             float turnMult = Lerp(tMul / 3, tMul, diff.sqrMagnitude);
             Vector3 turnVec = Vector3.Cross(-transform.up, hit.normal);
             goalVec += hit.normal * distMult + turnVec * turnMult;
-            if(Vector3.Dot(targetVec, fwd) < -.5f) goalVec += turnVec * turnMult * 100 + targetVec;
+            if(Vector3.Dot(targetVec, fwd) < -.5f) goalVec += targetVec;
 
             if(!debug) return goalVec;
             Debug.DrawRay(origin, (fwd - right * .5f) * rayDist, Color.yellow); //Diag Left

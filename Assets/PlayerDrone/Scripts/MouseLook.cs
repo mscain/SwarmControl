@@ -164,17 +164,17 @@ public class MouseLook : MonoBehaviour {
 
         if(Input.GetButton("E")) {
             var ps = jetParticles.velocityOverLifetime;
-            ps.z = 6;
+            ps.z = 6 * _sprint;
         } else if(Input.GetButton("Q")) {
             var ps = jetParticles.velocityOverLifetime;
-            ps.z = -6;
+            ps.z = -6 * _sprint;
         } else if(Input.GetButtonUp("E") || Input.GetButtonUp("Q")) {
             var ps = jetParticles.velocityOverLifetime;
             ps.z = 0;
         }
 
         hoverHeight += (Input.GetAxis("E") - Input.GetAxis("Q")) *
-                       Mathf.Pow(Mathf.Max(Mathf.Min(hoverHeight, 20), 1), 0.6f) / (40);
+                       Mathf.Pow(Mathf.Max(Mathf.Min(hoverHeight, 20), 1), 0.6f) / (40) * _sprint;
         if(lowHover) {
             hoverHeight = Mathf.Clamp(hoverHeight, 0.3f, maxHoverHeight);
         }
