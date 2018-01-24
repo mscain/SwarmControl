@@ -430,7 +430,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 8c58bc256bd55bf40b148defa0036486, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -464,7 +464,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a2049b947f4ad834eb15246ac0153511, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -498,7 +498,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a2049b947f4ad834eb15246ac0153511, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -532,7 +532,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a2049b947f4ad834eb15246ac0153511, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -566,7 +566,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a2049b947f4ad834eb15246ac0153511, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -600,7 +600,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a2049b947f4ad834eb15246ac0153511, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -634,7 +634,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: a2049b947f4ad834eb15246ac0153511, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -771,18 +771,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isControlledBySwarm: 1
+  debug: 1
   updateFrequency: 30
   proxMult: 0.3
   alignMult: 1
   goalMult: 1
-  scanRadius: 10
+  scanRadius: 3
   swarmSpread: 1
-  swarmSpreadTolerance: 0.4
+  swarmSpreadTolerance: 0.7
   repulsionForce: 0.5
   fwdControl: 0
   turnControl: 0
   botMoveVector: {x: 0, y: 0, z: 0}
-  head: {fileID: 1719117026230118}
   layerMask:
     serializedVersion: 2
     m_Bits: 4294961151
@@ -797,7 +797,7 @@ MonoBehaviour:
   headTexture: {fileID: 23915474826714800}
   speed: 50
   turnSpeed: 5
-  turnSharpness: 0.7
+  turnSharpness: 1
 --- !u!135 &135931643010216218
 SphereCollider:
   m_ObjectHideFlags: 1

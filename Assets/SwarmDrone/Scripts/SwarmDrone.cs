@@ -1,7 +1,6 @@
-﻿using System.Collections;
+﻿using ExtensionMethods;
 using System.Collections.Generic;
 using UnityEngine;
-using ExtensionMethods;
 using static UnityEngine.Mathf;
 using Random = UnityEngine.Random;
 
@@ -9,15 +8,15 @@ public class SwarmDrone : MonoBehaviour {
     #region Variables
 
     public bool isControlledBySwarm = true;
+    public bool debug = true;
     public float updateFrequency = 10; //e.g. 10 times / second
     public float proxMult, alignMult, goalMult;
     public float scanRadius = 5f; //How far each bot scans for other bots
     public float swarmSpread = 1f; //How far each robot should stay from other robots
-    public float swarmSpreadTolerance = .3f; //How much wiggle room they get
+    public float swarmSpreadTolerance = .3f; //How much wiggle room they get //TODO I think this actually does something different?
     public float repulsionForce = 0.02f; //How strongly they should repel away
     public float fwdControl, turnControl;
     public Vector3 botMoveVector; //used if isControlledBySwarm
-    public GameObject head;
     public LayerMask layerMask; //what should we ignore for collision detection rays
     public List<WheelCollider> wheelsR, wheelsL;
     public MeshRenderer headTexture;
@@ -34,7 +33,7 @@ public class SwarmDrone : MonoBehaviour {
         _target = GameObject.FindGameObjectWithTag("GoalBall").transform;
         headTexture.material.color = Color.HSVToRGB(Random.Range(0f, 1f), Random.Range(.2f, 1f), Random.Range(.5f, 1f));
 
-        InvokeRepeating(nameof(FlockingControl), 0, 1/updateFrequency);
+        InvokeRepeating(nameof(FlockingControl), 0, 1 / updateFrequency);
     }
 
     private void FixedUpdate() {
@@ -48,8 +47,8 @@ public class SwarmDrone : MonoBehaviour {
     /// </summary>
     private void FlockingControl() {
         Vector3 flockingControlVector = proxMult * CalcProximalControl()
-                                        + alignMult * CalcAlignControl()
-                                        + goalMult * CalcGoalControl();
+                                      + alignMult * CalcAlignControl()
+                                      + goalMult * CalcGoalControl();
 
         flockingControlVector = Vector3.ClampMagnitude(flockingControlVector, 1);
         if(isControlledBySwarm)
@@ -91,22 +90,81 @@ public class SwarmDrone : MonoBehaviour {
         Vector3 goalVec = Vector3.zero;
 
         RaycastHit hit;
-//        Vector3 p1 = transform.position + 0.3f * transform.right;
-//        Vector3 p2 = transform.position - 0.3f * transform.right;
-//        Debug.DrawRay(head.transform.position, transform.forward * (_rb.velocity.magnitude * 0.3f + 0.5f), Color.red);
-//        Debug.DrawRay(head.transform.position, (transform.forward + transform.right * .5f) * (_rb.velocity.magnitude * 0.3f + 0.5f), Color.red);
-//        Debug.DrawRay(head.transform.position, (transform.forward - transform.right * .5f) * (_rb.velocity.magnitude * 0.3f + 0.5f), Color.red);
-        if(Physics.Raycast(head.transform.position, transform.forward, out hit, _rb.velocity.magnitude * 0.3f + 0.5f, layerMask)) {
+        Vector3 origin = transform.position;
+        Vector3 fwd = transform.forward;
+        float rayDist = _rb.velocity.magnitude * 0.3f + 0.2f;
+        const float fMul = 5;
+        const float tMul = 10;
+        Vector3 right = transform.right;
+        Vector3 targetVec = Vector3.ClampMagnitude(_target.position - transform.position, 1);
+
+        if(debug) {
+            Debug.DrawRay(origin, fwd * rayDist, Color.red); //Front
+            Debug.DrawRay(origin, -fwd * 0.1f, Color.red); //Back
+            Debug.DrawRay(origin, (fwd + right * .5f) * rayDist, Color.red); //Diag Right
+            Debug.DrawRay(origin, (fwd - right * .5f) * rayDist, Color.red); //Diag Left
+            Debug.DrawRay(origin, right * .8f * rayDist, Color.red); //Right
+            Debug.DrawRay(origin, -right * .8f * rayDist, Color.red); //Left
+        }
+
+        if(Physics.Raycast(origin, -fwd, out hit, 0.1f, layerMask)) { //Back
+            int dirMult = ((int) Time.time) % 6 < 3 ? 1 : -1;
+            goalVec += fwd * 0.4f + dirMult * right;
+
+            if(debug) Debug.DrawRay(origin, -fwd * 0.1f, Color.yellow); //Back
+        } else if(Physics.Raycast(origin, fwd + right * .5f, out hit, rayDist * .8f, layerMask)) { //Diag Right
             Vector3 diff = transform.position - hit.point;
-            goalVec += diff.normalized * Lerp(5f, .1f, diff.sqrMagnitude) + Random.Range(-.3f, .3f) * transform.right;
-        } else if(Physics.Raycast(head.transform.position, transform.forward + transform.right * .5f, out hit, _rb.velocity.magnitude * 0.3f + 0.5f, layerMask)) {
+            diff *= Vector3.Dot(diff, -fwd);
+            float distMult = Lerp(fMul, .1f, diff.sqrMagnitude);
+            float turnMult = Lerp(tMul / 3, tMul, diff.sqrMagnitude);
+            Vector3 turnVec = Vector3.Cross(transform.up, hit.normal);
+            goalVec += hit.normal * distMult + turnVec * turnMult;
+            if(Vector3.Dot(targetVec, fwd) < -.5f) goalVec += turnVec * turnMult * 100 + targetVec;
+
+            if(!debug) return goalVec;
+            Debug.DrawRay(origin, (fwd + right * .5f) * rayDist, Color.yellow); //Diag Right
+            Debug.DrawRay(origin, diff, Color.cyan);
+            Debug.DrawRay(origin, turnVec, Color.blue);
+        } else if(Physics.Raycast(origin, fwd - right * .5f, out hit, rayDist * .8f, layerMask)) { //Diag Left
             Vector3 diff = transform.position - hit.point;
-            goalVec += diff.normalized * Lerp(5f, .1f, diff.sqrMagnitude) - 0.5f * transform.right;
-        } else if(Physics.Raycast(head.transform.position, transform.forward - transform.right * .5f, out hit, _rb.velocity.magnitude * 0.3f + 0.5f, layerMask)) {
+            diff *= Vector3.Dot(diff, -fwd);
+            float distMult = Lerp(fMul, .1f, diff.sqrMagnitude);
+            float turnMult = Lerp(tMul / 3, tMul, diff.sqrMagnitude);
+            Vector3 turnVec = Vector3.Cross(-transform.up, hit.normal);
+            goalVec += hit.normal * distMult + turnVec * turnMult;
+            if(Vector3.Dot(targetVec, fwd) < -.5f) goalVec += turnVec * turnMult * 100 + targetVec;
+
+            if(!debug) return goalVec;
+            Debug.DrawRay(origin, (fwd - right * .5f) * rayDist, Color.yellow); //Diag Left
+            Debug.DrawRay(origin, diff, Color.cyan);
+            Debug.DrawRay(origin, turnVec, Color.blue);
+        } else if(Physics.Raycast(origin, right, out hit, rayDist, layerMask)) { //Right
+            float turnMult = Vector3.Dot(hit.normal, -fwd);
+            turnMult = turnMult > 0 ? turnMult : 0;
+            goalVec += targetVec + fwd * 0.5f - right * turnMult;
+
+            if(!debug) return goalVec;
+            Debug.DrawRay(origin, right * .8f * rayDist, Color.yellow); //Right
+        } else if(Physics.Raycast(origin, -right, out hit, rayDist, layerMask)) { //Left
+            float turnMult = Vector3.Dot(hit.normal, -fwd);
+            turnMult = turnMult > 0 ? turnMult : 0;
+            goalVec += targetVec + fwd * 0.5f + right * turnMult;
+
+            if(!debug) return goalVec;
+            Debug.DrawRay(origin, -right * .8f * rayDist, Color.yellow); //Left
+        } else if(Physics.Raycast(origin, fwd, out hit, rayDist, layerMask)) { //Front
             Vector3 diff = transform.position - hit.point;
-            goalVec += diff.normalized * Lerp(5f, .1f, diff.sqrMagnitude) + 0.5f * transform.right;
-        }else if(_target != null) {
-            goalVec += Vector3.ClampMagnitude(_target.position - transform.position, 1);
+            diff *= Vector3.Dot(diff, -fwd);
+            float distMult = Lerp(fMul, .1f, diff.sqrMagnitude);
+            float turnMult = Lerp(.1f, tMul, diff.sqrMagnitude) * Random.Range(-1, 1);
+            Vector3 turnVec = Vector3.Cross(transform.up, diff.normalized);
+            goalVec += hit.normal * distMult + turnVec * turnMult;
+
+            if(!debug) return goalVec;
+            Debug.DrawRay(origin, fwd * rayDist, Color.yellow); //Front
+            Debug.DrawRay(origin, diff, Color.cyan);
+        } else if(_target != null) {
+            goalVec += targetVec;
         }
 
         return goalVec;
@@ -117,14 +175,14 @@ public class SwarmDrone : MonoBehaviour {
     /// </summary>
     /// <param name="moveVector">Vector that points where the bot should go, with magnitude between 0 and 1</param>
     private void SetMoveByVector(Vector3 moveVector) {
-        Debug.DrawRay(transform.position, moveVector / 2f, Color.green);
+        if(debug) Debug.DrawRay(transform.position, moveVector / 2f, Color.green);
 
         //Slows us down for turns
         float fwdSpeedControl = Vector3.Dot(transform.forward, moveVector.normalized);
         //Controls the amount we slow down per turn
         fwdSpeedControl = Lerp(moveVector.magnitude, moveVector.magnitude * fwdSpeedControl, turnSharpness);
         //Prevents stopping too fast
-        fwdControl = Extensions.SharpInDamp(fwdControl, fwdSpeedControl, 1f);
+        fwdControl = Extensions.SharpInDamp(fwdControl, fwdSpeedControl, .5f);
 
         //Turns faster the larger the angle is, slows down as we approach desired heading
         float turnSpeedControl = Deg2Rad * Vector3.Angle(transform.forward, moveVector);

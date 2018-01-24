@@ -9,7 +9,6 @@ public class MouseLook : MonoBehaviour {
     public ParticleSystem jetParticles;
     public GameObject cannon, barrel, laser, goalBall;
     public MouseLookTestHelper script;
-    public MouseLookTestHelper script2;
     public bool glidey;
     public float glideySpeed = 15;
     public bool lowHover;
@@ -17,8 +16,6 @@ public class MouseLook : MonoBehaviour {
     public float kick = 50;
     public float sprintSpeed = 2.5f;
     public float slowSpeed = 0.3f;
-    public float timeToFullSprint = 0.4f;
-    public float horizSprintRatio = 1f;
     public float acceleration = 30f;
     public float accelerationHoriz = 30f;
     public float deceleration = 1;
@@ -27,8 +24,6 @@ public class MouseLook : MonoBehaviour {
     public float maxHoverHeight = 30;
     public float hoverForce = 65f;
     public float maxVerticalSpeed = 24;
-    public bool clamped = true;
-    public bool gravity = true;
     public float mass = 0.2f;
     public float maxPush = 750;
     public float minPush = 100;
@@ -41,29 +36,26 @@ public class MouseLook : MonoBehaviour {
 
 //	[HideInInspector]
     public float cannonAngle;
-    private bool moving;
     public float mouseSensitivity;
     public float push;
-    private bool shouldShoot;
+    private bool _shouldShoot;
     public float pGain = 2600; // the proportional gain
     public float iGain = 40; // the integral gain
     public float dGain = 260; // differential gain
-    private float integrator = 19.6f; // error accumulator
-    private float lastError;
-    private float curPos = 2; // actual Pos
-    private float force = 785; // current force
-    private Rigidbody rb;
-    private float sprintVol1;
-    private float sprint = 1f;
-    private float velForward, velRight;
-    private Vector3 fwdVec, rightVec;
-    private Vector3 tangentVec, tangentRightVec;
+    private float _integrator = 19.6f; // error accumulator
+    private float _lastError;
+    private float _curPos = 2; // actual Pos
+    private float _force = 785; // current force
+    private Rigidbody _rb;
+    private float _sprintVol1;
+    private float _sprint = 1f;
+    private float _velForward, _velRight;
+    private Vector3 _fwdVec, _rightVec;
 
     #endregion
 
     private void Awake() {
-        push = (maxPush - minPush) / 2;
-        rb = GetComponent<Rigidbody>();
+        _rb = GetComponent<Rigidbody>();
     }
 
     /// <summary>
@@ -79,147 +71,129 @@ public class MouseLook : MonoBehaviour {
     }
 
     private void Walk() {
-        velForward = Vector3.Dot(rb.velocity, transform.forward); //Current fwd speed. Used to see if Kick is necessary.
-        velRight = Vector3.Dot(rb.velocity, transform.right); //Similar to ^
+        _velForward = Vector3.Dot(_rb.velocity, transform.forward); //Current fwd speed. Used to see if Kick is necessary.
+        _velRight = Vector3.Dot(_rb.velocity, transform.right); //Similar to ^
 
-        fwdVec = transform.forward * acceleration * vertInput * Time.deltaTime * sprint;
-        rightVec = transform.right * accelerationHoriz * horizInput * Time.deltaTime * sprint;
+        _fwdVec = transform.forward * acceleration * vertInput * Time.deltaTime * _sprint;
+        _rightVec = transform.right * accelerationHoriz * horizInput * Time.deltaTime * _sprint;
         //			Debug.DrawRay(tf.position, fwdVec.normalized, Color.blue);
         //			Debug.DrawRay(tf.position, rightVec.normalized, Color.cyan);
         if(Mathf.Abs(vertInput) > 0 && Mathf.Abs(horizInput) > 0) {
-            if(Mathf.Abs(velForward) < maxWalkSpeed * sprint / 1.5f) {
-                rb.velocity += fwdVec;
+            if(Mathf.Abs(_velForward) < maxWalkSpeed * _sprint / 1.5f) {
+                _rb.velocity += _fwdVec;
             }
 
-            if(Mathf.Abs(velRight) < maxWalkSpeed * sprint / 1.5f) {
-                rb.velocity += rightVec;
+            if(Mathf.Abs(_velRight) < maxWalkSpeed * _sprint / 1.5f) {
+                _rb.velocity += _rightVec;
             }
         } else {
-            if(Mathf.Abs(velForward) < maxWalkSpeed * sprint) {
-                rb.velocity += fwdVec;
+            if(Mathf.Abs(_velForward) < maxWalkSpeed * _sprint) {
+                _rb.velocity += _fwdVec;
                 if(Mathf.Abs(horizInput) < 0.1f)
-                    rb.velocity -= transform.right * velRight * deceleration / 5;
+                    _rb.velocity -= transform.right * _velRight * deceleration / 5;
             }
 
-            if(Mathf.Abs(velRight) < maxWalkSpeed * sprint) {
-                rb.velocity += rightVec;
+            if(Mathf.Abs(_velRight) < maxWalkSpeed * _sprint) {
+                _rb.velocity += _rightVec;
                 if(Mathf.Abs(vertInput) < 0.1f)
-                    rb.velocity -= transform.forward * velForward * deceleration / 5;
+                    _rb.velocity -= transform.forward * _velForward * deceleration / 5;
             }
         }
 
         //::Kick - If pressing walk from standstill, gives a kick so walking is more responsive.
-        if(vertInput > 0 && velForward < maxWalkSpeed / 3) {
-            rb.AddRelativeForce(0, 0, kick * 30 * sprint);
+        if(vertInput > 0 && _velForward < maxWalkSpeed / 3) {
+            _rb.AddRelativeForce(0, 0, kick * 30 * _sprint);
             //Debug.Log("kickf"); //\\\\\\\\\\\\\\\\\\\\\\\\\\
-        } else if(vertInput < 0 && velForward > -maxWalkSpeed / 3) {
-            rb.AddRelativeForce(0, 0, -kick * 30 * sprint);
+        } else if(vertInput < 0 && _velForward > -maxWalkSpeed / 3) {
+            _rb.AddRelativeForce(0, 0, -kick * 30 * _sprint);
             //Debug.Log("kickb"); //\\\\\\\\\\\\\\\\\\\\\\\\\\
         }
 
-        if(horizInput > 0 && velRight < maxWalkSpeed / 3) {
-            rb.AddRelativeForce(kick * 30 * sprint, 0, 0);
+        if(horizInput > 0 && _velRight < maxWalkSpeed / 3) {
+            _rb.AddRelativeForce(kick * 30 * _sprint, 0, 0);
             //Debug.Log("kickr"); //\\\\\\\\\\\\\\\\\\\\\\\\\\
-        } else if(horizInput < 0 && velRight > -maxWalkSpeed / 3) {
-            rb.AddRelativeForce(-kick * 30 * sprint, 0, 0);
+        } else if(horizInput < 0 && _velRight > -maxWalkSpeed / 3) {
+            _rb.AddRelativeForce(-kick * 30 * _sprint, 0, 0);
             //Debug.Log("kickl"); //\\\\\\\\\\\\\\\\\\\\\\\\\\
         }
     }
 
     private void Sprint(bool sprintPressed, bool slowPressed) {
         if(sprintPressed) {
-            sprint = sprintSpeed;
+            _sprint = sprintSpeed;
         } else if(slowPressed) {
-            sprint = slowSpeed;
+            _sprint = slowSpeed;
         } else {
-            sprint = Mathf.SmoothDamp(sprint, 1, ref sprintVol1, 0.2f);
+            _sprint = Mathf.SmoothDamp(_sprint, 1, ref _sprintVol1, 0.2f);
         }
     }
 
     private void Update() {
-        if(Input.GetKeyDown("o")) {
-            gravity = !gravity;
-        }
-
         if(Input.GetKeyDown("y")) {
             glidey = !glidey;
         }
 
+
+        if(!isControlled) return;
+
         ShootBall();
+        Sprint(Input.GetButton("Shift"), Input.GetButton("Ctrl"));
+        if(!glidey) Walk();
 
-        if(isControlled) {
-            Sprint(Input.GetButton("Shift"), Input.GetButton("Ctrl"));
-            if(!glidey) Walk();
-            moving = Mathf.Abs(vertInput) > 0.01f || Mathf.Abs(horizInput) > 0.01f;
-            if(Mathf.Abs(Input.GetAxis("Mouse ScrollWheel")) > 0.01f) {
-                push += Input.GetAxis("Mouse ScrollWheel") * 400;
-                push = Mathf.Clamp(push, minPush, maxPush);
-            }
-
-            vertInput = Input.GetAxis("Vertical");
-            horizInput = Input.GetAxis("Horizontal");
-
-            if(Input.GetKeyDown("u")) {
-                if(lowHover) {
-                    hoverHeight = transform.position.y;
-                } else {
-                    Ray ray = new Ray(transform.position, -transform.up);
-                    RaycastHit hit;
-                    if(Physics.Raycast(ray, out hit, maxHoverHeight)) {
-                        hoverHeight = hit.distance;
-                    }
-                }
-
-                lowHover = !lowHover;
-            }
-
-            if(Input.GetButton("E")) {
-                var ps = jetParticles.velocityOverLifetime;
-                ps.z = 6;
-            } else if(Input.GetButton("Q")) {
-                var ps = jetParticles.velocityOverLifetime;
-                ps.z = -6;
-            } else if(Input.GetButtonUp("E") || Input.GetButtonUp("Q")) {
-                var ps = jetParticles.velocityOverLifetime;
-                ps.z = 0;
-            }
-
-            hoverHeight += (Input.GetAxis("E") - Input.GetAxis("Q")) *
-                           Mathf.Pow(Mathf.Max(Mathf.Min(hoverHeight, 20), 1), 0.6f) / (40);
-            if(lowHover) {
-                hoverHeight = Mathf.Clamp(hoverHeight, 0.3f, maxHoverHeight);
-            }
-
-            shouldShoot |= Input.GetButtonDown("Fire");
+        if(Mathf.Abs(Input.GetAxis("Mouse ScrollWheel")) > 0.01f) {
+            push += Input.GetAxis("Mouse ScrollWheel") * 400;
+            push = Mathf.Clamp(push, minPush, maxPush);
         }
+
+        vertInput = Input.GetAxis("Vertical");
+        horizInput = Input.GetAxis("Horizontal");
+
+        if(Input.GetKeyDown("u")) {
+            if(lowHover) {
+                hoverHeight = transform.position.y;
+            } else {
+                Ray ray = new Ray(transform.position, -transform.up);
+                RaycastHit hit;
+                if(Physics.Raycast(ray, out hit, maxHoverHeight)) {
+                    hoverHeight = hit.distance;
+                }
+            }
+
+            lowHover = !lowHover;
+        }
+
+        if(Input.GetButton("E")) {
+            var ps = jetParticles.velocityOverLifetime;
+            ps.z = 6;
+        } else if(Input.GetButton("Q")) {
+            var ps = jetParticles.velocityOverLifetime;
+            ps.z = -6;
+        } else if(Input.GetButtonUp("E") || Input.GetButtonUp("Q")) {
+            var ps = jetParticles.velocityOverLifetime;
+            ps.z = 0;
+        }
+
+        hoverHeight += (Input.GetAxis("E") - Input.GetAxis("Q")) *
+                       Mathf.Pow(Mathf.Max(Mathf.Min(hoverHeight, 20), 1), 0.6f) / (40);
+        if(lowHover) {
+            hoverHeight = Mathf.Clamp(hoverHeight, 0.3f, maxHoverHeight);
+        }
+
+        _shouldShoot |= Input.GetButtonDown("Fire");
     }
 
     private void ShootBall() {
-        if(!Input.GetKeyDown("p") && !shouldShoot) return;
-        shouldShoot = false;
-        if(gravity) {
-            MouseLookTestHelper shot = Instantiate(script, cannon.transform.position, gameObject.transform.rotation);
-            shot.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-            shot.script = GetComponent<MouseLook>();
-            shot.barrelT = barrel.transform;
-            shot.push = push;
-            shot.size = shotSize;
-            shot.t = t;
-            shot.aimSpeed = aimSpeed;
-            shot.gravity = gravity;
-            shot.gameObject.GetComponent<Rigidbody>().mass = mass;
-        } else {
-            MouseLookTestHelper shot2 = Instantiate(script2, cannon.transform.position, gameObject.transform.rotation);
-            shot2.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-            shot2.script = GetComponent<MouseLook>();
-            shot2.barrelT = barrel.transform;
-            shot2.push = push;
-            shot2.size = shotSize;
-            shot2.t = t;
-            shot2.aimSpeed = aimSpeed;
-            shot2.gravity = gravity;
-            shot2.gameObject.GetComponent<Rigidbody>().mass = mass;
-        }
+        if(!Input.GetKeyDown("f") && !_shouldShoot) return;
+        _shouldShoot = false;
+        MouseLookTestHelper shot = Instantiate(script, cannon.transform.position, gameObject.transform.rotation);
+        shot.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
+        shot.script = GetComponent<MouseLook>();
+        shot.barrelT = barrel.transform;
+        shot.push = push;
+        shot.size = shotSize;
+        shot.t = t;
+        shot.aimSpeed = aimSpeed;
+        shot.gameObject.GetComponent<Rigidbody>().mass = mass;
     }
 
     private void FixedUpdate() {
@@ -243,7 +217,7 @@ public class MouseLook : MonoBehaviour {
 
         Vector3 jetDir = -jet.transform.up;
         Vector3 posVec = transform.position - jet.transform.position;
-        rb.AddTorque(-Vector3.Cross(jetDir, posVec) * hoverForce * 3);
+        _rb.AddTorque(-Vector3.Cross(jetDir, posVec) * hoverForce * 3);
         if(Vector3.Dot(jet.transform.up, Vector3.down) < .5) {
             if(lowHover) {
                 Ray ray = new Ray(transform.position, -transform.up);
@@ -251,28 +225,28 @@ public class MouseLook : MonoBehaviour {
                 if(Physics.Raycast(ray, out hit, hoverHeight)) {
                     float proportionalHeight = (hoverHeight - hit.distance) / hoverHeight;
                     Vector3 appliedHoverForce = jet.transform.up * proportionalHeight * hoverForce;
-                    rb.AddForce(appliedHoverForce, ForceMode.Acceleration);
+                    _rb.AddForce(appliedHoverForce, ForceMode.Acceleration);
                 } else {
-                    rb.AddForce(hoverForce * 20 * Vector3.down);
+                    _rb.AddForce(hoverForce * 20 * Vector3.down);
                 }
             } else {
-                curPos = transform.position.y;
-                float error = hoverHeight - curPos; //generate the error signal
-                integrator += error * Time.fixedDeltaTime; //integrate error
-                float diff = (error - lastError) / Time.fixedDeltaTime; //differentiate error
-                lastError = error;
+                _curPos = transform.position.y;
+                float error = hoverHeight - _curPos; //generate the error signal
+                _integrator += error * Time.fixedDeltaTime; //integrate error
+                float diff = (error - _lastError) / Time.fixedDeltaTime; //differentiate error
+                _lastError = error;
                 //calculate the force summing the 3 errors with respective gains:
-                force = error * pGain + integrator * iGain + diff * dGain;
-                if(Mathf.Abs(Vector3.Dot(rb.velocity, transform.up)) < maxVerticalSpeed) {
-                    rb.AddForce(force * jet.transform.up); // apply the force to accelerate the rigidbody
+                _force = error * pGain + _integrator * iGain + diff * dGain;
+                if(Mathf.Abs(Vector3.Dot(_rb.velocity, transform.up)) < maxVerticalSpeed) {
+                    _rb.AddForce(_force * jet.transform.up); // apply the force to accelerate the rigidbody
                 }
             }
         }
 
         if(glidey) {
-            rb.AddRelativeForce(horizInput * glideySpeed * sprint, 0f, vertInput * glideySpeed * sprint,
+            _rb.AddRelativeForce(horizInput * glideySpeed * _sprint, 0f, vertInput * glideySpeed * _sprint,
                 ForceMode.Acceleration);
-            rb.AddRelativeTorque(0f, turnInput * turnSpeed * mouseSensitivity, 0f, ForceMode.Acceleration);
+            _rb.AddRelativeTorque(0f, turnInput * turnSpeed * mouseSensitivity, 0f, ForceMode.Acceleration);
         }
     }
 

@@ -949,16 +949,13 @@ MonoBehaviour:
   laser: {fileID: 1717180609469016}
   goalBall: {fileID: 0}
   script: {fileID: 114737702918146044, guid: 967d1b3727308ca41a79b8bcca63925d, type: 2}
-  script2: {fileID: 114616341492738858, guid: 087f43b18b19794439a29c3f9ebf25ca, type: 2}
   glidey: 0
   glideySpeed: 7
   lowHover: 0
   maxWalkSpeed: 4
   kick: 4
-  sprintSpeed: 10
-  slowSpeed: 0.3
-  timeToFullSprint: 0.4
-  horizSprintRatio: 1
+  sprintSpeed: 5
+  slowSpeed: 0.255
   acceleration: 4
   accelerationHoriz: 4
   deceleration: 0.35
@@ -967,8 +964,6 @@ MonoBehaviour:
   maxHoverHeight: 30
   hoverForce: 65
   maxVerticalSpeed: 24
-  clamped: 1
-  gravity: 1
   mass: 10
   maxPush: 3000
   minPush: 100
@@ -981,7 +976,7 @@ MonoBehaviour:
   turnInput: 0
   cannonAngle: 0
   mouseSensitivity: 0.16
-  push: 330
+  push: 500
   pGain: 2600
   iGain: 40
   dGain: 450
