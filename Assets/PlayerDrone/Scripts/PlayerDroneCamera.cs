@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using ExtensionMethods;
 
-public class MouseLookCamera : MonoBehaviour {
+public class PlayerDroneCamera : MonoBehaviour {
     #region Variables
 
     public GameObject drone, cannon;
-    public MouseLook droneS;
+    public PlayerDrone droneS;
     public float sensitivity = 1f;
     public float lookSpeed, lookFactor;
     public float turnUpBound = 90;

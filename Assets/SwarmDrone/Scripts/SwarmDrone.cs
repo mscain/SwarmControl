@@ -1,5 +1,6 @@
 ﻿using ExtensionMethods;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using UnityEngine;
 using static UnityEngine.Mathf;
 using Random = UnityEngine.Random;
@@ -10,10 +11,10 @@ public class SwarmDrone : MonoBehaviour {
     public bool isControlledBySwarm = true;
     public bool debug = true;
     public float updateFrequency = 10; //e.g. 10 times / second
-    public float proxMult, alignMult, goalMult;
+    public float proxMult, goalMult;
     public float scanRadius = 5f; //How far each bot scans for other bots
     public float swarmSpread = 1f; //How far each robot should stay from other robots
-    public float swarmSpreadTolerance = .3f; //How much wiggle room they get //TODO I think this actually does something different?
+    public float swarmCohesion = .7f; //How much the swarm likes to stay together
     public float repulsionForce = 0.02f; //How strongly they should repel away
     public float fwdControl, turnControl;
     public Vector3 botMoveVector; //used if isControlledBySwarm
@@ -24,13 +25,16 @@ public class SwarmDrone : MonoBehaviour {
     public float turnSpeed = 5f;
     public float turnSharpness = 0.3f; //defines how sharp turns should be when changing botMoveVector
     private Rigidbody _rb;
-    private Transform _target;
+    private int _controlMode;
+    [CanBeNull] private PlayerDrone _player;
+    [CanBeNull] private Transform _carrot;
 
     #endregion
 
     private void Start() {
         _rb = GetComponent<Rigidbody>();
-        _target = GameObject.FindGameObjectWithTag("GoalBall").transform;
+        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDrone>();
+        _carrot = GameObject.FindGameObjectWithTag("Carrot").transform;
         headTexture.material.color = Color.HSVToRGB(Random.Range(0f, 1f), Random.Range(.2f, 1f), Random.Range(.5f, 1f));
 
         InvokeRepeating(nameof(FlockingControl), 0, 1 / updateFrequency);
@@ -46,16 +50,14 @@ public class SwarmDrone : MonoBehaviour {
     ///     Sets bot movement based on flocking algorithm.
     /// </summary>
     private void FlockingControl() {
-        Vector3 flockingControlVector = proxMult * CalcProximalControl()
-                                      + alignMult * CalcAlignControl()
-                                      + goalMult * CalcGoalControl();
+        _controlMode = _player != null ? _player.controlMode : 0;
+        Vector3 flockingControlVector = proxMult * CalcProximalControl() + goalMult * CalcGoalControl();
 
         flockingControlVector = Vector3.ClampMagnitude(flockingControlVector, 1);
         if(isControlledBySwarm)
             botMoveVector = flockingControlVector;
     }
 
-    //TODO Multiply by how fast they are moving towards each other?
     private Vector3 CalcProximalControl() {
         Vector3 proxVec = Vector3.zero;
 
@@ -66,10 +68,11 @@ public class SwarmDrone : MonoBehaviour {
                 continue; //Skip this bot
 
             float di = Vector3.Distance(transform.position, botT.position);
-            if(Abs(di - swarmSpread) < swarmSpreadTolerance) {
-                //They are close enough, so slow them downn relative to each other
+            if(Abs(di - swarmSpread) < swarmCohesion) {
+                //They are at the right distance, so slow them down relative to each other
                 proxVec += (headCollider.attachedRigidbody.velocity - _rb.velocity).normalized;
             }
+
 
             float sigma = swarmSpread / Pow(2, 1 / 6f);
             float eps = repulsionForce;
@@ -82,13 +85,15 @@ public class SwarmDrone : MonoBehaviour {
         return proxVec;
     }
 
-    private Vector3 CalcAlignControl() {
-        Vector3 alignVec = Vector3.zero;
-        return alignVec;
-    }
-
     private Vector3 CalcGoalControl() {
-        Vector3 goalVec = Vector3.zero;
+        Vector3 targetVec = Vector3.zero; //Where we want to go
+        Vector3 goalVec = Vector3.zero; //Where we end up going
+
+        switch(_controlMode) {
+            case 1:
+                if(_carrot != null) targetVec = Vector3.ClampMagnitude(_carrot.position - transform.position, 1);
+                break;
+        }
 
         RaycastHit hit;
         Vector3 origin = transform.position;
@@ -97,7 +102,6 @@ public class SwarmDrone : MonoBehaviour {
         const float fMul = 10;
         const float tMul = 10;
         Vector3 right = transform.right;
-        Vector3 targetVec = Vector3.ClampMagnitude(_target.position - transform.position, 1);
 
         if(debug) {
             Debug.DrawRay(origin, fwd * rayDist, Color.red); //Front
@@ -110,7 +114,7 @@ public class SwarmDrone : MonoBehaviour {
 
         if(Physics.Raycast(origin, -fwd, out hit, 0.1f, layerMask)) { //Back
             int dirMult = (int) Time.time % 6 < 3 ? 1 : -1;
-            goalVec += fwd * 0.4f + dirMult * right;
+            goalVec += fwd + dirMult * right;
 
             if(debug) Debug.DrawRay(origin, -fwd * 0.1f, Color.yellow); //Back
         } else if(Physics.Raycast(origin, fwd + right * .5f, out hit, rayDist * .8f, layerMask)) { //Diag Right
@@ -164,7 +168,7 @@ public class SwarmDrone : MonoBehaviour {
             if(!debug) return goalVec;
             Debug.DrawRay(origin, fwd * rayDist, Color.yellow); //Front
             Debug.DrawRay(origin, diff, Color.cyan);
-        } else if(_target != null) {
+        } else {
             goalVec += targetVec;
         }
 

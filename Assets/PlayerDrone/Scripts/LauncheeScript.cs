@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 using ExtensionMethods;
 
-public class MouseLookTestHelper : MonoBehaviour {
+public class LauncheeScript : MonoBehaviour {
     #region Variables
 
-    public MouseLook script;
+    public PlayerDrone script;
     public float aimSpeed;
     public float push = 90;
     public bool gravity = true;

@@ -774,11 +774,10 @@ MonoBehaviour:
   debug: 1
   updateFrequency: 30
   proxMult: 0.3
-  alignMult: 1
   goalMult: 1
   scanRadius: 3
   swarmSpread: 1
-  swarmSpreadTolerance: 0.7
+  swarmCohesion: 0.7
   repulsionForce: 0.5
   fwdControl: 0
   turnControl: 0
