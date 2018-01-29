@@ -1,6 +1,6 @@
-﻿using ExtensionMethods;
+﻿using JetBrains.Annotations; //TODO remove this and the CanBeNull tags since they might cause issues when sharing this script
+using ExtensionMethods;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 using UnityEngine;
 using static UnityEngine.Mathf;
 using Random = UnityEngine.Random;
@@ -10,7 +10,6 @@ public class SwarmDrone : MonoBehaviour {
 
     public bool isControlledBySwarm = true;
     public bool debug = true;
-    public float updateFrequency = 10; //e.g. 10 times / second
     public float proxMult, goalMult;
     public float scanRadius = 5f; //How far each bot scans for other bots
     public float swarmSpread = 1f; //How far each robot should stay from other robots
@@ -24,6 +23,7 @@ public class SwarmDrone : MonoBehaviour {
     public float speed = 50f;
     public float turnSpeed = 5f;
     public float turnSharpness = 0.3f; //defines how sharp turns should be when changing botMoveVector
+    private const float UpdateFrequency = 30; //e.g. 10 times / second
     private Rigidbody _rb;
     private int _controlMode;
     [CanBeNull] private PlayerDrone _player;
@@ -34,10 +34,11 @@ public class SwarmDrone : MonoBehaviour {
     private void Start() {
         _rb = GetComponent<Rigidbody>();
         _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerDrone>();
+        _player?.swarm.Add(gameObject); //Add this bot to the swarm
         _carrot = GameObject.FindGameObjectWithTag("Carrot").transform;
         headTexture.material.color = Color.HSVToRGB(Random.Range(0f, 1f), Random.Range(.2f, 1f), Random.Range(.5f, 1f));
 
-        InvokeRepeating(nameof(FlockingControl), 0, 1 / updateFrequency);
+        InvokeRepeating(nameof(FlockingControl), 0, 1 / UpdateFrequency);
     }
 
     private void FixedUpdate() {
@@ -50,7 +51,7 @@ public class SwarmDrone : MonoBehaviour {
     ///     Sets bot movement based on flocking algorithm.
     /// </summary>
     private void FlockingControl() {
-        _controlMode = _player != null ? _player.controlMode : 0;
+        _controlMode = _player != null ? _player.swarmControlMode : 0;
         Vector3 flockingControlVector = proxMult * CalcProximalControl() + goalMult * CalcGoalControl();
 
         flockingControlVector = Vector3.ClampMagnitude(flockingControlVector, 1);
@@ -92,6 +93,17 @@ public class SwarmDrone : MonoBehaviour {
         switch(_controlMode) {
             case 1:
                 if(_carrot != null) targetVec = Vector3.ClampMagnitude(_carrot.position - transform.position, 1);
+                break;
+            case 2:
+                if(_player == null) break;
+
+                targetVec = _player.swarmVec;
+                Vector3 centerVec = Vector3.ClampMagnitude(_player.swarmCenterPos - transform.position, 1);
+                if(Input.GetButton("Vertical") || Input.GetButton("Horizontal"))
+                    targetVec += centerVec * 0.1f;
+                else
+                    targetVec += centerVec * 0.4f;
+
                 break;
         }
 

@@ -1,12 +1,28 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using ExtensionMethods;
 
 public class PlayerDrone : MonoBehaviour {
     #region Variables
 
-    public int controlMode = 1; //0 is null, 1 is Carrot, 2 is TODO...
-    public GameObject thisCamera, jet, jetBall;
+    /*
+     0 is null; no control, drones just drift around
+     1 is carrot; carrot can be moved around scene, and swarm follows
+   TODO:
+     2 can be vector based control at swarm COM
+     3 can be vector based control at center of implied circle w/ optional visualization of the circle
+     4 can be leader where carrot drags behind leader at distance based on size of swarm
+        when leader turns, carrot will slowly move to keep being behind the leader
+     5 can be the above, but the carrot won't stay behind the leader, so it's like the leader is dragging the carrot on a chain
+     6 can be leader that rest of the swarm flock to -- leader holds the carrot
+    */
+    public int swarmControlMode = 1;
+
+    public bool isControlled; //TODO make this switch to an auto-follow mode with a top down (and/or angled?) view
+
+    //TODO this should auto be set by swarmControlMode, but should be able to be toggled manually too
+    //TODO Make swarm spread changable
+    public GameObject jet, jetBall;
     public LayerMask aimRayLayerMask;
     public ParticleSystem jetParticles;
     public GameObject cannon, barrel, laser;
@@ -32,11 +48,9 @@ public class PlayerDrone : MonoBehaviour {
     public float aimSpeed = 1;
     public float t = 2;
     public float shotSize = 0.2957171f;
-    public bool isControlled;
 
     [HideInInspector] public float vertInput, horizInput, turnInput;
 
-//	[HideInInspector]
     public float cannonAngle;
     public float mouseSensitivity;
     public float push;
@@ -49,11 +63,14 @@ public class PlayerDrone : MonoBehaviour {
     private float _curPos = 2; // actual Pos
     private float _force = 785; // current force
     private Rigidbody _rb;
+    private PlayerDroneCamera _camera;
     private float _sprintVol1;
     private float _sprint = 1f;
     private float _velForward, _velRight;
     private Vector3 _fwdVec, _rightVec;
     private Transform _carrot;
+    [HideInInspector] public List<GameObject> swarm;
+    [HideInInspector] public Vector3 swarmVec, swarmCenterPos, swarmCenterDir;
 
     #endregion
 
@@ -62,12 +79,115 @@ public class PlayerDrone : MonoBehaviour {
         float frac = (push - minPush) / (maxPush - minPush);
         barrel.GetComponent<MeshRenderer>().material.SetColor("_EmisColor", Color.HSVToRGB(1f, frac + .2f, 1));
         _carrot = GameObject.FindGameObjectWithTag("Carrot").transform;
+        _camera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerDroneCamera>();
     }
 
     private void Update() {
-        SetControlMode();
+        SetSwarmCenters();
+        SwarmControlMode();
 
-        if(!isControlled) return;
+        if(isControlled)
+            PlayerControl();
+        else
+            AutoControl();
+    }
+
+    private void FixedUpdate() {
+        JetControl();
+        Walk();
+    }
+
+    private void LateUpdate() { UpdateJetBall(); }
+
+
+    #region SwarmControl
+
+    private void SwarmControlMode() {
+        for(int number = 0; number <= 9; number++) {
+            if(Input.GetKeyDown(number.ToString()))
+                swarmControlMode = number;
+        }
+
+        switch(swarmControlMode) {
+            case 1:
+                isControlled = true;
+                MoveCarrot(Input.GetButton("Mouse0"));
+                break;
+            case 2:
+                isControlled = false;
+                Vector3 fwdControl = transform.forward * Input.GetAxis("Vertical");
+                Vector3 rightControl = transform.right * Input.GetAxis("Horizontal");
+                float zeroer = Mathf.Clamp(Input.GetAxis("Vertical") + Input.GetAxis("Horizontal"), 0f, 1f);
+                swarmVec = Extensions.SharpInDamp(swarmVec, swarmVec * zeroer + fwdControl + rightControl, .5f);
+                swarmVec = Vector3.ClampMagnitude(swarmVec, 1);
+                break;
+        }
+    }
+
+    private void SetSwarmCenters() {
+        swarmCenterPos = Vector3.zero;
+        swarmCenterDir = Vector3.zero;
+        foreach(GameObject bot in swarm) {
+            swarmCenterPos += bot.transform.position;
+            swarmCenterDir += bot.transform.forward;
+        }
+        swarmCenterPos /= swarm.Count;
+        swarmCenterDir /= swarm.Count;
+        swarmCenterDir.Normalize();
+    }
+
+    private float GetSwarmRadius(Vector3 center) {
+        float radius = 0;
+        foreach(GameObject bot in swarm) {
+            float distance = Vector3.Distance(bot.transform.position, center);
+            if(distance > radius)
+                radius = distance;
+        }
+        return radius;
+    }
+
+    /// <summary>
+    /// Move the carrot to wherever the laser is pointing
+    /// </summary>
+    /// <param name="moveCarrotKey">Set to true to move carrot</param>
+    private void MoveCarrot(bool moveCarrotKey) {
+        if(!moveCarrotKey) return;
+
+        RaycastHit hit;
+        if(!Physics.Raycast(laser.transform.position, laser.transform.forward, out hit, 100f, aimRayLayerMask)) return;
+
+        _carrot.transform.position = Extensions.SharpInDamp(_carrot.transform.position, hit.point, 1);
+    }
+
+    #endregion
+
+    #region DroneAuto
+
+    private void AutoControl() {
+        //Position
+        float swarmRadius = GetSwarmRadius(swarmCenterPos);
+        Vector3 camPos = swarmCenterPos + Vector3.up * (-swarmCenterPos.y + transform.position.y);
+        transform.position = Extensions.SharpInDamp(transform.position, camPos, 3f);
+
+        //Rotation
+        Vector3 camRot = Vector3.ProjectOnPlane(swarmCenterDir, Vector3.up);
+        Vector3 forward = Vector3.ProjectOnPlane(_camera.transform.up, Vector3.up);
+        float angle = Vector3.SignedAngle(forward, camRot, Vector3.up);
+        if(Input.GetButton("Vertical") && !Input.GetButton("Horizontal"))
+            angle = Mathf.Abs(angle) > 20 ? angle : 0;
+        _camera.smoothX = Extensions.SharpInDampAngle(0, angle, .3f);
+
+        //Height
+        float height = swarmRadius / Mathf.Tan(_camera.gameObject.GetComponent<Camera>().fieldOfView/2 * Mathf.Deg2Rad);
+        Debug.Log(height);
+        hoverHeight = Extensions.SharpInDamp(hoverHeight, height, .3f);
+    }
+
+    #endregion
+
+    #region DroneControlled
+
+    private void PlayerControl() {
         if(Input.GetKeyDown("y")) {
             glidey = !glidey;
         }
@@ -82,21 +202,6 @@ public class PlayerDrone : MonoBehaviour {
         _shouldShoot |= Input.GetButtonDown("Fire");
     }
 
-    private void FixedUpdate() {
-        MoveCarrot(Input.GetButton("Mouse0"));
-        JetControl();
-        Walk();
-    }
-
-    private void LateUpdate() { UpdateJetBall(); }
-
-    private void SetControlMode() {
-        for(int number = 0; number <= 9; number++) {
-            if(Input.GetKeyDown(number.ToString()))
-                controlMode = number;
-        }
-        //TODO set things and such
-    }
 
     private void Walk() {
         if(glidey) {
@@ -160,6 +265,65 @@ public class PlayerDrone : MonoBehaviour {
         }
     }
 
+    private void HoverControl(bool changeHoverMode, string hoverUpAxisName, string hoverDownAxisName) {
+        if(changeHoverMode) {
+            if(lowHover) {
+                hoverHeight = transform.position.y;
+            } else {
+                RaycastHit hit;
+                if(Physics.Raycast(transform.position, -transform.up, out hit, maxHoverHeight)) {
+                    hoverHeight = hit.distance;
+                }
+            }
+
+            lowHover = !lowHover;
+        }
+
+        if(Input.GetButton(hoverUpAxisName)) {
+            var ps = jetParticles.velocityOverLifetime;
+            ps.z = 6 * _sprint;
+        } else if(Input.GetButton(hoverDownAxisName)) {
+            var ps = jetParticles.velocityOverLifetime;
+            ps.z = -6 * _sprint;
+        } else if(Input.GetButtonUp(hoverUpAxisName) || Input.GetButtonUp(hoverDownAxisName)) {
+            var ps = jetParticles.velocityOverLifetime;
+            ps.z = 0;
+        }
+
+        hoverHeight += (Input.GetAxis(hoverUpAxisName) - Input.GetAxis(hoverDownAxisName)) *
+                       Mathf.Pow(Mathf.Max(Mathf.Min(hoverHeight, 20), 1), 0.6f) / (40) * _sprint;
+        if(lowHover) {
+            hoverHeight = Mathf.Clamp(hoverHeight, 0.3f, maxHoverHeight);
+        }
+    }
+
+    private void ShootBall(bool shootKey) {
+        if(!shootKey && !_shouldShoot) return;
+        _shouldShoot = false;
+        LauncheeScript shot = Instantiate(script, cannon.transform.position, gameObject.transform.rotation);
+        shot.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
+        shot.script = GetComponent<PlayerDrone>();
+        shot.barrelT = barrel.transform;
+        shot.push = push;
+        shot.size = shotSize;
+        shot.t = t;
+        shot.aimSpeed = aimSpeed;
+        shot.gameObject.GetComponent<Rigidbody>().mass = mass;
+    }
+
+    private void UpdateShootStrength(float shootStrengthAxis) {
+        if(!(Mathf.Abs(shootStrengthAxis) > 0.01f)) return;
+        push += shootStrengthAxis * 400;
+        push = Mathf.Clamp(push, minPush, maxPush);
+
+        float frac = (push - minPush) / (maxPush - minPush);
+        barrel.GetComponent<MeshRenderer>().material.SetColor("_EmisColor", Color.HSVToRGB(1f, frac + .2f, 1));
+    }
+
+    #endregion
+
+    #region DroneGeneral
+
     private void JetControl() {
         Quaternion jbr = Quaternion.FromToRotation(-transform.up, Vector3.down);
         float downDot = Vector3.Dot(transform.up, Vector3.down);
@@ -203,78 +367,11 @@ public class PlayerDrone : MonoBehaviour {
         }
     }
 
-    private void HoverControl(bool changeHoverMode, string hoverUpAxisName, string hoverDownAxisName) {
-        if(changeHoverMode) {
-            if(lowHover) {
-                hoverHeight = transform.position.y;
-            } else {
-                Ray ray = new Ray(transform.position, -transform.up);
-                RaycastHit hit;
-                if(Physics.Raycast(ray, out hit, maxHoverHeight)) {
-                    hoverHeight = hit.distance;
-                }
-            }
-
-            lowHover = !lowHover;
-        }
-
-        if(Input.GetButton(hoverUpAxisName)) {
-            var ps = jetParticles.velocityOverLifetime;
-            ps.z = 6 * _sprint;
-        } else if(Input.GetButton(hoverDownAxisName)) {
-            var ps = jetParticles.velocityOverLifetime;
-            ps.z = -6 * _sprint;
-        } else if(Input.GetButtonUp(hoverUpAxisName) || Input.GetButtonUp(hoverDownAxisName)) {
-            var ps = jetParticles.velocityOverLifetime;
-            ps.z = 0;
-        }
-
-        hoverHeight += (Input.GetAxis(hoverUpAxisName) - Input.GetAxis(hoverDownAxisName)) *
-                       Mathf.Pow(Mathf.Max(Mathf.Min(hoverHeight, 20), 1), 0.6f) / (40) * _sprint;
-        if(lowHover) {
-            hoverHeight = Mathf.Clamp(hoverHeight, 0.3f, maxHoverHeight);
-        }
-    }
-
     private void UpdateJetBall() {
         if(!isControlled) return;
         jetBall.transform.Rotate(transform.right * vertInput * 6, Space.World);
         jetBall.transform.Rotate(transform.forward * -horizInput * 6, Space.World);
     }
 
-    /// <summary>
-    /// Move the carrot to wherever the laser is pointing
-    /// </summary>
-    /// <param name="moveCarrotKey">Set to true to move carrot</param>
-    private void MoveCarrot(bool moveCarrotKey) {
-        if(!moveCarrotKey) return;
-
-        RaycastHit hit;
-        if(!Physics.Raycast(laser.transform.position, laser.transform.forward, out hit, 100f, aimRayLayerMask)) return;
-
-        _carrot.transform.position = Extensions.SharpInDamp(_carrot.transform.position, hit.point, 1);
-    }
-
-    private void ShootBall(bool shootKey) {
-        if(!shootKey && !_shouldShoot) return;
-        _shouldShoot = false;
-        LauncheeScript shot = Instantiate(script, cannon.transform.position, gameObject.transform.rotation);
-        shot.transform.localScale = new Vector3(0.001f, 0.001f, 0.001f);
-        shot.script = GetComponent<PlayerDrone>();
-        shot.barrelT = barrel.transform;
-        shot.push = push;
-        shot.size = shotSize;
-        shot.t = t;
-        shot.aimSpeed = aimSpeed;
-        shot.gameObject.GetComponent<Rigidbody>().mass = mass;
-    }
-
-    private void UpdateShootStrength(float shootStrengthAxis) {
-        if(!(Mathf.Abs(shootStrengthAxis) > 0.01f)) return;
-        push += shootStrengthAxis * 400;
-        push = Mathf.Clamp(push, minPush, maxPush);
-
-        float frac = (push - minPush) / (maxPush - minPush);
-        barrel.GetComponent<MeshRenderer>().material.SetColor("_EmisColor", Color.HSVToRGB(1f, frac + .2f, 1));
-    }
+    #endregion
 }

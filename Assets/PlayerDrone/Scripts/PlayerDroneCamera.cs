@@ -32,6 +32,9 @@ public class PlayerDroneCamera : MonoBehaviour {
 
         if(droneS.isControlled)
             smoothY = -aimSensitivity * sensitivity * Input.GetAxis("Mouse Y") * 15f;
+        else
+            smoothY = 90;
+
         if(Y)
             turnedY2 += smoothY;
         turnedY2 = Mathf.Clamp(turnedY2, -turnUpBound, turnUpBound) % (turnUpBound + 1);
