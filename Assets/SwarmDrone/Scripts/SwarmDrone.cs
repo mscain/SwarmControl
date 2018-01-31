@@ -95,6 +95,7 @@ public class SwarmDrone : MonoBehaviour {
                 if(_carrot != null) targetVec = Vector3.ClampMagnitude(_carrot.position - transform.position, 1);
                 break;
             case 2:
+            case 3:
                 if(_player == null) break;
 
                 targetVec = _player.swarmVec;

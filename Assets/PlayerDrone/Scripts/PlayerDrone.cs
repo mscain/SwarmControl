@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using ExtensionMethods;
 
@@ -8,8 +9,8 @@ public class PlayerDrone : MonoBehaviour {
     /*
      0 is null; no control, drones just drift around
      1 is carrot; carrot can be moved around scene, and swarm follows
+     2 is vector based control at swarm COM
    TODO:
-     2 can be vector based control at swarm COM
      3 can be vector based control at center of implied circle w/ optional visualization of the circle
      4 can be leader where carrot drags behind leader at distance based on size of swarm
         when leader turns, carrot will slowly move to keep being behind the leader
@@ -22,7 +23,7 @@ public class PlayerDrone : MonoBehaviour {
 
     //TODO this should auto be set by swarmControlMode, but should be able to be toggled manually too
     //TODO Make swarm spread changable
-    public GameObject jet, jetBall;
+    public GameObject arrow, jet, jetBall;
     public LayerMask aimRayLayerMask;
     public ParticleSystem jetParticles;
     public GameObject cannon, barrel, laser;
@@ -83,13 +84,9 @@ public class PlayerDrone : MonoBehaviour {
     }
 
     private void Update() {
-        SetSwarmCenters();
         SwarmControlMode();
 
-        if(isControlled)
-            PlayerControl();
-        else
-            AutoControl();
+        if(isControlled) PlayerControl();
     }
 
     private void FixedUpdate() {
@@ -103,28 +100,76 @@ public class PlayerDrone : MonoBehaviour {
     #region SwarmControl
 
     private void SwarmControlMode() {
+        bool runOnce = false;
+
         for(int number = 0; number <= 9; number++) {
-            if(Input.GetKeyDown(number.ToString()))
-                swarmControlMode = number;
+            if(!Input.GetKeyDown(number.ToString())) continue;
+            swarmControlMode = number;
+            runOnce = true;
         }
 
         switch(swarmControlMode) {
             case 1:
-                isControlled = true;
+                if(runOnce) {
+                    ActivateDrone();
+                    Destroy(GetComponent<LineRenderer>());
+                }
+
                 MoveCarrot(Input.GetButton("Mouse0"));
                 break;
             case 2:
-                isControlled = false;
-                Vector3 fwdControl = transform.forward * Input.GetAxis("Vertical");
-                Vector3 rightControl = transform.right * Input.GetAxis("Horizontal");
-                float zeroer = Mathf.Clamp(Input.GetAxis("Vertical") + Input.GetAxis("Horizontal"), 0f, 1f);
-                swarmVec = Extensions.SharpInDamp(swarmVec, swarmVec * zeroer + fwdControl + rightControl, .5f);
-                swarmVec = Vector3.ClampMagnitude(swarmVec, 1);
+                if(runOnce) {
+                    DeactivateDrone();
+                    Destroy(GetComponent<LineRenderer>());
+                }
+
+                SetSwarmCentersByCOM();
+                ControlSwarmParallel();
+                break;
+            case 3:
+                if(runOnce) DeactivateDrone();
+                SetSwarmCentersByShape();
+                ControlSwarmParallel();
+
+
+                break;
+            default:
+                if(runOnce) ActivateDrone();
                 break;
         }
     }
 
-    private void SetSwarmCenters() {
+    private void ControlSwarmParallel() {
+        AutoControl(controlRotation: true);
+
+        arrow.transform.position = swarmCenterPos;
+        arrow.transform.forward = _camera.transform.up;
+        arrow.transform.localScale = new Vector3(1, 1, Input.GetAxis("Vertical"));
+
+        Vector3 fwdControl = transform.forward * Input.GetAxis("Vertical");
+        Vector3 rightControl = transform.right * Input.GetAxis("Horizontal");
+        float zeroer = Mathf.Clamp(Input.GetAxis("Vertical") + Input.GetAxis("Horizontal"), 0f, 1f);
+        swarmVec = Extensions.SharpInDamp(swarmVec, swarmVec * zeroer + fwdControl + rightControl, .5f);
+        swarmVec = Vector3.ClampMagnitude(swarmVec, 1);
+    }
+
+    private void DeactivateDrone() {
+        isControlled = false;
+        laser.SetActive(false);
+        arrow.SetActive(true);
+        foreach(var mesh in GetComponentsInChildren<MeshRenderer>()) { mesh.enabled = false; }
+        foreach(var coll in GetComponentsInChildren<Collider>()) { coll.enabled = false; }
+    }
+
+    private void ActivateDrone() {
+        isControlled = true;
+        laser.SetActive(true);
+        arrow.SetActive(false);
+        foreach(var mesh in GetComponentsInChildren<MeshRenderer>()) { mesh.enabled = true; }
+        foreach(var coll in GetComponentsInChildren<Collider>()) { coll.enabled = true; }
+    }
+
+    private void SetSwarmCentersByCOM() {
         swarmCenterPos = Vector3.zero;
         swarmCenterDir = Vector3.zero;
         foreach(GameObject bot in swarm) {
@@ -132,6 +177,42 @@ public class PlayerDrone : MonoBehaviour {
             swarmCenterDir += bot.transform.forward;
         }
         swarmCenterPos /= swarm.Count;
+        swarmCenterDir /= swarm.Count;
+        swarmCenterDir.Normalize();
+    }
+
+    private void SetSwarmCentersByShape() {
+        swarmCenterPos = Vector3.zero;
+        swarmCenterDir = Vector3.zero;
+        List<Vector3> vertices = new List<Vector3>();
+        foreach(GameObject bot in swarm) {
+            vertices.Add(bot.transform.position);
+            swarmCenterDir += bot.transform.forward;
+        }
+        List<Vector3> hull = JarvisMarchAlgorithm.GetConvexHull(vertices);
+
+        LineRenderer lr = GetComponent<LineRenderer>() ? GetComponent<LineRenderer>() : gameObject.AddComponent<LineRenderer>();
+        lr.material = new Material(Shader.Find("Particles/Additive"));
+        lr.widthMultiplier = 0.2f;
+        lr.positionCount = hull.Count + 1;
+
+        float sx = 0, sy = 0, sz = 0, sL = 0;
+        for(int i = 0; i < hull.Count; i++) {
+            lr.SetPosition(i, hull[i]);
+
+            Vector3 prev = i == 0 ? hull.Last() : hull[i - 1];
+            Vector3 curr = hull[i];
+            float x0 = prev.x, y0 = prev.y, z0 = prev.z;
+            float x1 = curr.x, y1 = curr.y, z1 = curr.z;
+            float l = Vector3.Distance(prev, curr);
+            sx += (x0 + x1) / 2 * l;
+            sy += (y0 + y1) / 2 * l;
+            sz += (z0 + z1) / 2 * l;
+            sL += l;
+        }
+        lr.SetPosition(hull.Count, hull[0]);
+
+        swarmCenterPos = new Vector3(sx / sL, sy / sL, sz / sL);
         swarmCenterDir /= swarm.Count;
         swarmCenterDir.Normalize();
     }
@@ -163,23 +244,26 @@ public class PlayerDrone : MonoBehaviour {
 
     #region DroneAuto
 
-    private void AutoControl() {
+    private void AutoControl(bool controlRotation) {
         //Position
         float swarmRadius = GetSwarmRadius(swarmCenterPos);
         Vector3 camPos = swarmCenterPos + Vector3.up * (-swarmCenterPos.y + transform.position.y);
         transform.position = Extensions.SharpInDamp(transform.position, camPos, 3f);
 
         //Rotation
-        Vector3 camRot = Vector3.ProjectOnPlane(swarmCenterDir, Vector3.up);
-        Vector3 forward = Vector3.ProjectOnPlane(_camera.transform.up, Vector3.up);
-        float angle = Vector3.SignedAngle(forward, camRot, Vector3.up);
-        if(Input.GetButton("Vertical") && !Input.GetButton("Horizontal"))
-            angle = Mathf.Abs(angle) > 20 ? angle : 0;
-        _camera.smoothX = Extensions.SharpInDampAngle(0, angle, .3f);
+        if(controlRotation) {
+            _camera.smoothX = Input.GetAxis("Horizontal");
+        } else {
+            Vector3 camRot = Vector3.ProjectOnPlane(swarmCenterDir, Vector3.up);
+            Vector3 forward = Vector3.ProjectOnPlane(_camera.transform.up, Vector3.up);
+            float angle = Vector3.SignedAngle(forward, camRot, Vector3.up);
+            if(Input.GetButton("Vertical") && !Input.GetButton("Horizontal"))
+                angle = Mathf.Abs(angle) > 20 ? angle : 0;
+            _camera.smoothX = Extensions.SharpInDampAngle(0, angle, .3f);
+        }
 
         //Height
-        float height = swarmRadius / Mathf.Tan(_camera.gameObject.GetComponent<Camera>().fieldOfView/2 * Mathf.Deg2Rad);
-        Debug.Log(height);
+        float height = swarmRadius / Mathf.Tan(_camera.gameObject.GetComponent<Camera>().fieldOfView / 2 * Mathf.Deg2Rad) + 2.5f;
         hoverHeight = Extensions.SharpInDamp(hoverHeight, height, .3f);
     }
 
