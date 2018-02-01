@@ -1,11 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using ExtensionMethods;
 
 public class PlayerDrone : MonoBehaviour {
-    //TODO Make swarm spread changable
-
     #region Variables
 
     /*
@@ -13,13 +12,13 @@ public class PlayerDrone : MonoBehaviour {
      1 is carrot; carrot can be moved around scene, and swarm follows
      2 is vector based control at swarm COM
      3 is vector based control at center of implied circle w/ optional visualization of the circle
-   TODO:
-     4 can be leader where carrot drags behind leader at distance based on size of swarm
+     4 is leader that rest of the swarm flock to -- leader holds the carrot
+     5 is leader where carrot drags behind leader at distance based on size of swarm
         when leader turns, carrot will slowly move to keep being behind the leader
-     5 can be the above, but the carrot won't stay behind the leader, so it's like the leader is dragging the carrot on a chain
-     6 can be leader that rest of the swarm flock to -- leader holds the carrot
+     6 is the above, but the carrot won't stay behind the leader, so it's like the leader is dragging the carrot on a chain
     */
     public int swarmControlMode = 1;
+    public float swarmSpread = 1;
 
     public bool isControlled;
     public GameObject arrow, jet, jetBall;
@@ -86,6 +85,8 @@ public class PlayerDrone : MonoBehaviour {
     private void Update() {
         SwarmControlMode();
 
+        swarmSpread += Input.GetAxis("Spread") * Time.deltaTime;
+
         if(isControlled) PlayerControl();
     }
 
@@ -103,11 +104,13 @@ public class PlayerDrone : MonoBehaviour {
         bool runOnce = false;
 
         for(int number = 0; number <= 9; number++) {
-            if(!Input.GetKeyDown(number.ToString())) continue;
+            if(!Input.GetKeyDown(number.ToString()) || swarmControlMode == number) continue;
             swarmControlMode = number;
             runOnce = true;
         }
 
+        float swarmRadius = Mathf.Sqrt(swarmSpread * swarm.Count / Mathf.PI);
+        Vector3 carrotTarget;
         switch(swarmControlMode) {
             case 1:
                 if(runOnce) {
@@ -137,15 +140,41 @@ public class PlayerDrone : MonoBehaviour {
                 SetSwarmCentersByShape(drawShape: true);
                 ControlSwarmParallel();
                 break;
-            case 6:
+            case 4:
                 if(runOnce) {
                     DeactivateDrone();
                     Destroy(GetComponent<LineRenderer>());
-                    ElectLeader();
+                    DeelectLeader();
+                    StartCoroutine(ElectLeader());
                 }
                 SetSwarmCentersByShape(drawShape: false);
                 ControlSwarmLeader();
                 _carrot.transform.position = _leader.transform.position;
+                break;
+            case 5:
+                if(runOnce) {
+                    DeactivateDrone();
+                    Destroy(GetComponent<LineRenderer>());
+                    DeelectLeader();
+                    StartCoroutine(ElectLeader());
+                }
+                SetSwarmCentersByShape(drawShape: false);
+                ControlSwarmLeader();
+                carrotTarget = _leader.transform.position - _leader.transform.forward * swarmRadius;
+                _carrot.transform.position = Extensions.SharpInDamp(_carrot.transform.position, carrotTarget, 0.3f);
+                break;
+            case 6:
+                if(runOnce) {
+                    DeactivateDrone();
+                    Destroy(GetComponent<LineRenderer>());
+                    DeelectLeader();
+                    StartCoroutine(ElectLeader());
+                }
+                SetSwarmCentersByShape(drawShape: false);
+                ControlSwarmLeader();
+                carrotTarget = _leader.transform.position;
+                if(Vector3.Distance(_carrot.transform.position, _leader.transform.position) > swarmRadius)
+                    _carrot.transform.position = Extensions.SharpInDamp(_carrot.transform.position, carrotTarget, 0.3f);
                 break;
             default:
                 if(runOnce) {
@@ -164,12 +193,17 @@ public class PlayerDrone : MonoBehaviour {
         _leader.turnControl = Input.GetAxis("Horizontal") * trnSpdCtrl;
     }
 
-    public void ElectLeader() {
+    public IEnumerator ElectLeader() {
         int rand = Random.Range(0, swarm.Count - 1);
         _leader = swarm[rand].GetComponent<SwarmDrone>();
         _leader.isLeader = true;
+        if(_leader.GetComponent<Light>())
+            yield return new WaitForEndOfFrame(); //Prevents errors when same leader is elected after being de-elected
         Light lgt = _leader.gameObject.AddComponent<Light>();
         lgt.color = Color.red;
+        lgt.range = 1;
+        lgt.intensity = 2;
+        yield return null;
     }
 
     public void DeelectLeader() {
@@ -296,7 +330,7 @@ public class PlayerDrone : MonoBehaviour {
         float angle;
         switch(rotationMode) {
             case 1:
-                _camera.smoothX = Input.GetAxis("Horizontal");
+                _camera.smoothX = Input.GetAxis("Horizontal") * 2f;
                 break;
             case 2:
                 camRot = Vector3.ProjectOnPlane(_leader.transform.forward, Vector3.up);

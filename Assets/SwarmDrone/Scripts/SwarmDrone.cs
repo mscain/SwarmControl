@@ -47,6 +47,8 @@ public class SwarmDrone : MonoBehaviour {
     }
 
     private void FixedUpdate() {
+        if(_player != null) swarmSpread = _player.swarmSpread;
+
         if(isControlledBySwarm && !isLeader)
             SetMoveByVector(botMoveVector);
 
@@ -69,7 +71,7 @@ public class SwarmDrone : MonoBehaviour {
             _player?.swarm.Remove(gameObject); //Remove this bot from the swarm
             if(isLeader) {
                 _player?.DeelectLeader();
-                _player?.ElectLeader();
+                StartCoroutine(_player?.ElectLeader());
             }
             foreach(var coll in GetComponentsInChildren<Collider>()) {
                 coll.gameObject.layer = 0;
