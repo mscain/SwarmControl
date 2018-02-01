@@ -69,6 +69,7 @@ public class PlayerDrone : MonoBehaviour {
     private float _velForward, _velRight;
     private Vector3 _fwdVec, _rightVec;
     private Transform _carrot;
+    private SwarmDrone _leader;
     [HideInInspector] public List<GameObject> swarm;
     [HideInInspector] public Vector3 swarmVec, swarmCenterPos, swarmCenterDir;
 
@@ -112,6 +113,7 @@ public class PlayerDrone : MonoBehaviour {
                 if(runOnce) {
                     ActivateDrone();
                     Destroy(GetComponent<LineRenderer>());
+                    DeelectLeader();
                 }
 
                 MoveCarrot(Input.GetButton("Mouse0"));
@@ -120,13 +122,18 @@ public class PlayerDrone : MonoBehaviour {
                 if(runOnce) {
                     DeactivateDrone();
                     Destroy(GetComponent<LineRenderer>());
+                    DeelectLeader();
                 }
 
                 SetSwarmCentersByCOM();
                 ControlSwarmParallel();
                 break;
             case 3:
-                if(runOnce) DeactivateDrone();
+                if(runOnce) {
+                    DeactivateDrone();
+                    DeelectLeader();
+                }
+
                 SetSwarmCentersByShape(drawShape: true);
                 ControlSwarmParallel();
                 break;
@@ -134,30 +141,52 @@ public class PlayerDrone : MonoBehaviour {
                 if(runOnce) {
                     DeactivateDrone();
                     Destroy(GetComponent<LineRenderer>());
+                    ElectLeader();
                 }
                 SetSwarmCentersByShape(drawShape: false);
-
+                ControlSwarmLeader();
+                _carrot.transform.position = _leader.transform.position;
                 break;
             default:
                 if(runOnce) {
                     ActivateDrone();
                     Destroy(GetComponent<LineRenderer>());
+                    DeelectLeader();
                 }
                 break;
         }
     }
 
+    private void ControlSwarmLeader() {
+        AutoControl(rotationMode: 2);
+        _leader.fwdControl = Input.GetAxis("Vertical");
+        float trnSpdCtrl = Mathf.Lerp(.6f, .4f, _leader.GetComponent<Rigidbody>().velocity.magnitude / 2.7f);
+        _leader.turnControl = Input.GetAxis("Horizontal") * trnSpdCtrl;
+    }
+
+    public void ElectLeader() {
+        int rand = Random.Range(0, swarm.Count - 1);
+        _leader = swarm[rand].GetComponent<SwarmDrone>();
+        _leader.isLeader = true;
+        Light lgt = _leader.gameObject.AddComponent<Light>();
+        lgt.color = Color.red;
+    }
+
+    public void DeelectLeader() {
+        if(_leader == null) return;
+        _leader.isLeader = false;
+        Destroy(_leader.gameObject.GetComponent<Light>());
+    }
+
     private void ControlSwarmParallel() {
-        AutoControl(controlRotation: true);
+        AutoControl(rotationMode: 1);
 
         arrow.transform.position = swarmCenterPos;
         arrow.transform.forward = _camera.transform.up;
         arrow.transform.localScale = new Vector3(1, 1, Input.GetAxis("Vertical"));
 
         Vector3 fwdControl = transform.forward * Input.GetAxis("Vertical");
-        Vector3 rightControl = transform.right * Input.GetAxis("Horizontal");
-        float zeroer = Mathf.Clamp(Input.GetAxis("Vertical") + Input.GetAxis("Horizontal"), 0f, 1f);
-        swarmVec = Extensions.SharpInDamp(swarmVec, swarmVec * zeroer + fwdControl + rightControl, .5f);
+        swarmVec = Extensions.SharpInDamp(swarmVec, swarmVec * Mathf.Abs(Input.GetAxis("Vertical")) + fwdControl, .5f);
         swarmVec = Vector3.ClampMagnitude(swarmVec, 1);
     }
 
@@ -255,22 +284,34 @@ public class PlayerDrone : MonoBehaviour {
 
     #region DroneAuto
 
-    private void AutoControl(bool controlRotation) {
+    private void AutoControl(int rotationMode = 0) {
         //Position
         float swarmRadius = GetSwarmRadius(swarmCenterPos);
         Vector3 camPos = swarmCenterPos + Vector3.up * (-swarmCenterPos.y + transform.position.y);
         transform.position = Extensions.SharpInDamp(transform.position, camPos, 3f);
 
         //Rotation
-        if(controlRotation) {
-            _camera.smoothX = Input.GetAxis("Horizontal");
-        } else {
-            Vector3 camRot = Vector3.ProjectOnPlane(swarmCenterDir, Vector3.up);
-            Vector3 forward = Vector3.ProjectOnPlane(_camera.transform.up, Vector3.up);
-            float angle = Vector3.SignedAngle(forward, camRot, Vector3.up);
-            if(Input.GetButton("Vertical") && !Input.GetButton("Horizontal"))
-                angle = Mathf.Abs(angle) > 20 ? angle : 0;
-            _camera.smoothX = Extensions.SharpInDampAngle(0, angle, .3f);
+        Vector3 camRot;
+        Vector3 forward;
+        float angle;
+        switch(rotationMode) {
+            case 1:
+                _camera.smoothX = Input.GetAxis("Horizontal");
+                break;
+            case 2:
+                camRot = Vector3.ProjectOnPlane(_leader.transform.forward, Vector3.up);
+                forward = Vector3.ProjectOnPlane(_camera.transform.up, Vector3.up);
+                angle = Vector3.SignedAngle(forward, camRot, Vector3.up);
+                _camera.smoothX = Extensions.SharpInDampAngle(0, angle, 2f);
+                break;
+            default:
+                camRot = Vector3.ProjectOnPlane(swarmCenterDir, Vector3.up);
+                forward = Vector3.ProjectOnPlane(_camera.transform.up, Vector3.up);
+                angle = Vector3.SignedAngle(forward, camRot, Vector3.up);
+                if(Input.GetButton("Vertical") && !Input.GetButton("Horizontal"))
+                    angle = Mathf.Abs(angle) > 20 ? angle : 0;
+                _camera.smoothX = Extensions.SharpInDampAngle(0, angle, .3f);
+                break;
         }
 
         //Height

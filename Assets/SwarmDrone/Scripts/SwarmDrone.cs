@@ -26,10 +26,13 @@ public class SwarmDrone : MonoBehaviour {
     public float turnSharpness = 0.3f; //defines how sharp turns should be when changing botMoveVector
     private const float UpdateFrequency = 30; //e.g. 10 times / second
     private Rigidbody _rb;
+    private const float UpsideDownMax = 1.0f;
+    private float _upsideDownTimer = UpsideDownMax;
     private int _controlMode;
     [CanBeNull] private PlayerDrone _player;
     [CanBeNull] private Transform _carrot;
     private bool _inSwarm = true;
+    [HideInInspector] public bool isLeader;
 
     #endregion
 
@@ -44,10 +47,17 @@ public class SwarmDrone : MonoBehaviour {
     }
 
     private void FixedUpdate() {
-        if(isControlledBySwarm)
+        if(isControlledBySwarm && !isLeader)
             SetMoveByVector(botMoveVector);
 
-        isAlive = IsGrounded();
+        if(!IsGrounded()) {
+            _upsideDownTimer -= Time.fixedDeltaTime;
+        } else {
+            _upsideDownTimer = UpsideDownMax;
+        }
+
+        isAlive = _upsideDownTimer > 0;
+
         if(isAlive && !_inSwarm) {
             _player?.swarm.Add(gameObject); //Add this bot to the swarm
             foreach(var coll in GetComponentsInChildren<Collider>()) {
@@ -55,14 +65,18 @@ public class SwarmDrone : MonoBehaviour {
             }
             headTexture.gameObject.layer = 11;
             _inSwarm = true;
-        }else if(!isAlive && _inSwarm) {
+        } else if(!isAlive && _inSwarm) {
             _player?.swarm.Remove(gameObject); //Remove this bot from the swarm
+            if(isLeader) {
+                _player?.DeelectLeader();
+                _player?.ElectLeader();
+            }
             foreach(var coll in GetComponentsInChildren<Collider>()) {
                 coll.gameObject.layer = 0;
             }
             _inSwarm = false;
         }
-        
+
         Move(fwdControl, turnControl);
     }
 
@@ -116,14 +130,18 @@ public class SwarmDrone : MonoBehaviour {
             case 2:
             case 3:
                 if(_player == null) break;
-
                 targetVec = _player.swarmVec;
                 Vector3 centerVec = Vector3.ClampMagnitude(_player.swarmCenterPos - transform.position, 1);
                 if(Input.GetButton("Vertical") || Input.GetButton("Horizontal"))
                     targetVec += centerVec * 0.1f;
                 else
                     targetVec += centerVec * 0.4f;
-
+                break;
+            case 4:
+            case 5:
+            case 6:
+                if(_carrot != null && !isLeader)
+                    targetVec = Vector3.ClampMagnitude(_carrot.position - transform.position, 1);
                 break;
         }
 

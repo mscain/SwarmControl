@@ -771,7 +771,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isControlledBySwarm: 1
-  debug: 1
+  debug: 0
   isAlive: 1
   proxMult: 0.3
   goalMult: 1
@@ -797,6 +797,7 @@ MonoBehaviour:
   speed: 50
   turnSpeed: 5
   turnSharpness: 1
+  isLeader: 0
 --- !u!135 &135931643010216218
 SphereCollider:
   m_ObjectHideFlags: 1
