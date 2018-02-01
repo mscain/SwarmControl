@@ -771,7 +771,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isControlledBySwarm: 1
-  debug: 0
+  debug: 1
+  isAlive: 1
   proxMult: 0.3
   goalMult: 1
   scanRadius: 3

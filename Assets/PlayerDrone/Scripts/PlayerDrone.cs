@@ -4,14 +4,16 @@ using UnityEngine;
 using ExtensionMethods;
 
 public class PlayerDrone : MonoBehaviour {
+    //TODO Make swarm spread changable
+
     #region Variables
 
     /*
      0 is null; no control, drones just drift around
      1 is carrot; carrot can be moved around scene, and swarm follows
      2 is vector based control at swarm COM
+     3 is vector based control at center of implied circle w/ optional visualization of the circle
    TODO:
-     3 can be vector based control at center of implied circle w/ optional visualization of the circle
      4 can be leader where carrot drags behind leader at distance based on size of swarm
         when leader turns, carrot will slowly move to keep being behind the leader
      5 can be the above, but the carrot won't stay behind the leader, so it's like the leader is dragging the carrot on a chain
@@ -19,10 +21,7 @@ public class PlayerDrone : MonoBehaviour {
     */
     public int swarmControlMode = 1;
 
-    public bool isControlled; //TODO make this switch to an auto-follow mode with a top down (and/or angled?) view
-
-    //TODO this should auto be set by swarmControlMode, but should be able to be toggled manually too
-    //TODO Make swarm spread changable
+    public bool isControlled;
     public GameObject arrow, jet, jetBall;
     public LayerMask aimRayLayerMask;
     public ParticleSystem jetParticles;
@@ -128,13 +127,22 @@ public class PlayerDrone : MonoBehaviour {
                 break;
             case 3:
                 if(runOnce) DeactivateDrone();
-                SetSwarmCentersByShape();
+                SetSwarmCentersByShape(drawShape: true);
                 ControlSwarmParallel();
-
+                break;
+            case 6:
+                if(runOnce) {
+                    DeactivateDrone();
+                    Destroy(GetComponent<LineRenderer>());
+                }
+                SetSwarmCentersByShape(drawShape: false);
 
                 break;
             default:
-                if(runOnce) ActivateDrone();
+                if(runOnce) {
+                    ActivateDrone();
+                    Destroy(GetComponent<LineRenderer>());
+                }
                 break;
         }
     }
@@ -181,7 +189,7 @@ public class PlayerDrone : MonoBehaviour {
         swarmCenterDir.Normalize();
     }
 
-    private void SetSwarmCentersByShape() {
+    private void SetSwarmCentersByShape(bool drawShape) {
         swarmCenterPos = Vector3.zero;
         swarmCenterDir = Vector3.zero;
         List<Vector3> vertices = new List<Vector3>();
@@ -191,14 +199,17 @@ public class PlayerDrone : MonoBehaviour {
         }
         List<Vector3> hull = JarvisMarchAlgorithm.GetConvexHull(vertices);
 
-        LineRenderer lr = GetComponent<LineRenderer>() ? GetComponent<LineRenderer>() : gameObject.AddComponent<LineRenderer>();
-        lr.material = new Material(Shader.Find("Particles/Additive"));
-        lr.widthMultiplier = 0.2f;
-        lr.positionCount = hull.Count + 1;
+        LineRenderer lr = null;
+        if(drawShape) {
+            lr = GetComponent<LineRenderer>() ? GetComponent<LineRenderer>() : gameObject.AddComponent<LineRenderer>();
+            lr.material = new Material(Shader.Find("Particles/Additive"));
+            lr.widthMultiplier = 0.2f;
+            lr.positionCount = hull.Count + 1;
+        }
 
         float sx = 0, sy = 0, sz = 0, sL = 0;
         for(int i = 0; i < hull.Count; i++) {
-            lr.SetPosition(i, hull[i]);
+            if(drawShape) lr.SetPosition(i, hull[i]);
 
             Vector3 prev = i == 0 ? hull.Last() : hull[i - 1];
             Vector3 curr = hull[i];
@@ -210,7 +221,7 @@ public class PlayerDrone : MonoBehaviour {
             sz += (z0 + z1) / 2 * l;
             sL += l;
         }
-        lr.SetPosition(hull.Count, hull[0]);
+        if(drawShape) lr.SetPosition(hull.Count, hull[0]);
 
         swarmCenterPos = new Vector3(sx / sL, sy / sL, sz / sL);
         swarmCenterDir /= swarm.Count;

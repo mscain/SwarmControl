@@ -10,6 +10,7 @@ public class SwarmDrone : MonoBehaviour {
 
     public bool isControlledBySwarm = true;
     public bool debug = true;
+    public bool isAlive = true;
     public float proxMult, goalMult;
     public float scanRadius = 5f; //How far each bot scans for other bots
     public float swarmSpread = 1f; //How far each robot should stay from other robots
@@ -28,6 +29,7 @@ public class SwarmDrone : MonoBehaviour {
     private int _controlMode;
     [CanBeNull] private PlayerDrone _player;
     [CanBeNull] private Transform _carrot;
+    private bool _inSwarm = true;
 
     #endregion
 
@@ -44,6 +46,23 @@ public class SwarmDrone : MonoBehaviour {
     private void FixedUpdate() {
         if(isControlledBySwarm)
             SetMoveByVector(botMoveVector);
+
+        isAlive = IsGrounded();
+        if(isAlive && !_inSwarm) {
+            _player?.swarm.Add(gameObject); //Add this bot to the swarm
+            foreach(var coll in GetComponentsInChildren<Collider>()) {
+                coll.gameObject.layer = 12;
+            }
+            headTexture.gameObject.layer = 11;
+            _inSwarm = true;
+        }else if(!isAlive && _inSwarm) {
+            _player?.swarm.Remove(gameObject); //Remove this bot from the swarm
+            foreach(var coll in GetComponentsInChildren<Collider>()) {
+                coll.gameObject.layer = 0;
+            }
+            _inSwarm = false;
+        }
+        
         Move(fwdControl, turnControl);
     }
 
@@ -65,7 +84,7 @@ public class SwarmDrone : MonoBehaviour {
         //select headColliders within scanRadius of this bot
         foreach(Collider headCollider in Physics.OverlapSphere(transform.position, scanRadius, 1 << 11)) {
             Transform botT = headCollider.transform.parent;
-            if(botT.gameObject.Equals(gameObject))
+            if(botT.gameObject.Equals(gameObject) || !botT.GetComponent<SwarmDrone>().isAlive)
                 continue; //Skip this bot
 
             float di = Vector3.Distance(transform.position, botT.position);
@@ -224,5 +243,15 @@ public class SwarmDrone : MonoBehaviour {
             wheel.motorTorque = fwdInput * speed - turnInput * turnSpeed;
         foreach(WheelCollider wheel in wheelsL)
             wheel.motorTorque = fwdInput * speed + turnInput * turnSpeed;
+    }
+
+    private bool IsGrounded() {
+        foreach(WheelCollider wheel in wheelsR)
+            if(wheel.isGrounded)
+                return true;
+        foreach(WheelCollider wheel in wheelsL)
+            if(wheel.isGrounded)
+                return true;
+        return false;
     }
 }
