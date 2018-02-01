@@ -83,14 +83,13 @@ public class PlayerDrone : MonoBehaviour {
     }
 
     private void Update() {
-        SwarmControlMode();
-
         swarmSpread += Input.GetAxis("Spread") * Time.deltaTime;
-
+        SwarmControlMode();
         if(isControlled) PlayerControl();
     }
 
     private void FixedUpdate() {
+        SwarmControlModeFixed();
         JetControl();
         Walk();
     }
@@ -100,6 +99,9 @@ public class PlayerDrone : MonoBehaviour {
 
     #region SwarmControl
 
+    /// <summary>
+    /// Sets up the different control modes
+    /// </summary>
     private void SwarmControlMode() {
         bool runOnce = false;
 
@@ -108,80 +110,89 @@ public class PlayerDrone : MonoBehaviour {
             swarmControlMode = number;
             runOnce = true;
         }
+        if(!runOnce) return;
 
+        switch(swarmControlMode) {
+            case 1:
+                ActivateDrone();
+                Destroy(GetComponent<LineRenderer>());
+                DeelectLeader();
+                break;
+            case 2:
+                DeactivateDrone();
+                arrow.SetActive(true);
+                Destroy(GetComponent<LineRenderer>());
+                DeelectLeader();
+                break;
+            case 3:
+                DeactivateDrone();
+                arrow.SetActive(true);
+                DeelectLeader();
+                break;
+            case 4:
+                DeactivateDrone();
+                arrow.SetActive(false);
+                Destroy(GetComponent<LineRenderer>());
+                DeelectLeader();
+                StartCoroutine(ElectLeader());
+                break;
+            case 5:
+                DeactivateDrone();
+                arrow.SetActive(false);
+                Destroy(GetComponent<LineRenderer>());
+                DeelectLeader();
+                StartCoroutine(ElectLeader());
+                break;
+            case 6:
+                DeactivateDrone();
+                arrow.SetActive(false);
+                Destroy(GetComponent<LineRenderer>());
+                DeelectLeader();
+                StartCoroutine(ElectLeader());
+                break;
+            default:
+                ActivateDrone();
+                Destroy(GetComponent<LineRenderer>());
+                DeelectLeader();
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Operates the different control modes
+    /// </summary>
+    private void SwarmControlModeFixed() {
         float swarmRadius = Mathf.Sqrt(swarmSpread * swarm.Count / Mathf.PI);
         Vector3 carrotTarget;
         switch(swarmControlMode) {
             case 1:
-                if(runOnce) {
-                    ActivateDrone();
-                    Destroy(GetComponent<LineRenderer>());
-                    DeelectLeader();
-                }
-
                 MoveCarrot(Input.GetButton("Mouse0"));
                 break;
             case 2:
-                if(runOnce) {
-                    DeactivateDrone();
-                    Destroy(GetComponent<LineRenderer>());
-                    DeelectLeader();
-                }
-
                 SetSwarmCentersByCOM();
                 ControlSwarmParallel();
                 break;
             case 3:
-                if(runOnce) {
-                    DeactivateDrone();
-                    DeelectLeader();
-                }
-
                 SetSwarmCentersByShape(drawShape: true);
                 ControlSwarmParallel();
                 break;
             case 4:
-                if(runOnce) {
-                    DeactivateDrone();
-                    Destroy(GetComponent<LineRenderer>());
-                    DeelectLeader();
-                    StartCoroutine(ElectLeader());
-                }
                 SetSwarmCentersByShape(drawShape: false);
                 ControlSwarmLeader();
                 _carrot.transform.position = _leader.transform.position;
                 break;
             case 5:
-                if(runOnce) {
-                    DeactivateDrone();
-                    Destroy(GetComponent<LineRenderer>());
-                    DeelectLeader();
-                    StartCoroutine(ElectLeader());
-                }
                 SetSwarmCentersByShape(drawShape: false);
                 ControlSwarmLeader();
                 carrotTarget = _leader.transform.position - _leader.transform.forward * swarmRadius;
                 _carrot.transform.position = Extensions.SharpInDamp(_carrot.transform.position, carrotTarget, 0.3f);
                 break;
             case 6:
-                if(runOnce) {
-                    DeactivateDrone();
-                    Destroy(GetComponent<LineRenderer>());
-                    DeelectLeader();
-                    StartCoroutine(ElectLeader());
-                }
                 SetSwarmCentersByShape(drawShape: false);
                 ControlSwarmLeader();
                 carrotTarget = _leader.transform.position;
                 if(Vector3.Distance(_carrot.transform.position, _leader.transform.position) > swarmRadius)
                     _carrot.transform.position = Extensions.SharpInDamp(_carrot.transform.position, carrotTarget, 0.3f);
-                break;
-            default:
-                if(runOnce) {
-                    ActivateDrone();
-                    Destroy(GetComponent<LineRenderer>());
-                    DeelectLeader();
-                }
                 break;
         }
     }
@@ -227,7 +238,6 @@ public class PlayerDrone : MonoBehaviour {
     private void DeactivateDrone() {
         isControlled = false;
         laser.SetActive(false);
-        arrow.SetActive(true);
         foreach(var mesh in GetComponentsInChildren<MeshRenderer>()) { mesh.enabled = false; }
         foreach(var coll in GetComponentsInChildren<Collider>()) { coll.enabled = false; }
     }
@@ -260,6 +270,12 @@ public class PlayerDrone : MonoBehaviour {
             vertices.Add(bot.transform.position);
             swarmCenterDir += bot.transform.forward;
         }
+        swarmCenterDir /= swarm.Count;
+        swarmCenterDir.Normalize();
+        if(vertices.Count == 1) {
+            swarmCenterPos = swarm[0].transform.position;
+            return;
+        }
         List<Vector3> hull = JarvisMarchAlgorithm.GetConvexHull(vertices);
 
         LineRenderer lr = null;
@@ -287,8 +303,6 @@ public class PlayerDrone : MonoBehaviour {
         if(drawShape) lr.SetPosition(hull.Count, hull[0]);
 
         swarmCenterPos = new Vector3(sx / sL, sy / sL, sz / sL);
-        swarmCenterDir /= swarm.Count;
-        swarmCenterDir.Normalize();
     }
 
     private float GetSwarmRadius(Vector3 center) {
