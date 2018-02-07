@@ -2,13 +2,16 @@
 using System.Linq;
 using UnityEngine;
 
-//Generate a counter-clockwise convex hull with the jarvis march algorithm (gift wrapping)
-//The algorithm is O(n*n) but is often faster if the number of points on the hull is fewer than all points
-//In that case the algorithm will be O(h * n)
-//Is more robust than other algorithms because it will handle colinear points with ease
-//The algorithm will fail if we have more than 3 colinear points
-//But this is a special case, which will take time to test, so make sure they are NOT colinear!!!
+
 public static class JarvisMarchAlgorithm {
+    /// <summary>
+    /// Generate a counter-clockwise convex hull with the jarvis march algorithm (gift wrapping).
+    /// The algorithm is O(n*n) but is often faster if the number of points on the hull is fewer than all points.
+    /// In that case the algorithm will be O(h * n).
+    /// Is more robust than other algorithms because it will handle colinear points with ease.
+    /// The algorithm will fail if we have more than 3 colinear points.
+    /// But this is a special case, which will take time to test, so make sure they are NOT colinear!!!
+    /// </summary>
     public static List<Vector3> GetConvexHull(List<Vector3> points) {
         //If we have just 3 points, then they are the convex hull, so return those
         if(points.Count == 3) return points; //These might not be ccw, and they may also be colinear

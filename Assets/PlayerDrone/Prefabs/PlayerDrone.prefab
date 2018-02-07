@@ -997,10 +997,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   swarmControlMode: 1
-  isControlled: 1
+  swarmSpread: 1
   arrow: {fileID: 1503830742892766}
-  jet: {fileID: 1591633143836936}
-  jetBall: {fileID: 1572942702411860}
   aimRayLayerMask:
     serializedVersion: 2
     m_Bits: 4294965503
@@ -1008,10 +1006,13 @@ MonoBehaviour:
   cannon: {fileID: 1844029763280862}
   barrel: {fileID: 1326941861528930}
   laser: {fileID: 1717180609469016}
-  script: {fileID: 114737702918146044, guid: 967d1b3727308ca41a79b8bcca63925d, type: 2}
+  jet: {fileID: 1591633143836936}
+  jetBall: {fileID: 1572942702411860}
+  launcheeScript: {fileID: 114737702918146044, guid: 967d1b3727308ca41a79b8bcca63925d,
+    type: 2}
+  mouseSensitivity: 0.16
   glidey: 0
   glideySpeed: 7
-  lowHover: 0
   maxWalkSpeed: 4
   kick: 4
   sprintSpeed: 5
@@ -1024,18 +1025,14 @@ MonoBehaviour:
   maxHoverHeight: 30
   hoverForce: 65
   maxVerticalSpeed: 24
-  mass: 10
+  ballMass: 10
   maxPush: 3000
   minPush: 100
-  aimSpeed: 1
-  t: 2
-  shotSize: 0.115
+  isControlled: 1
   vertInput: 0
   horizInput: 0
   turnInput: 0
   cannonAngle: 0
-  mouseSensitivity: 0.16
-  push: 500
   pGain: 2600
   iGain: 40
   dGain: 450

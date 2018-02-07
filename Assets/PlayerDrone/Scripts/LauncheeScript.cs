@@ -4,13 +4,11 @@ using ExtensionMethods;
 public class LauncheeScript : MonoBehaviour {
     #region Variables
 
-    public PlayerDrone script;
-    public float aimSpeed;
+    public PlayerDrone launcherScript;
     public float push = 90;
-    public bool gravity = true;
     public float size = 0.2957171f;
-    public float t = 3;
     public Transform barrelT;
+    private float _t = 2;
     private float _t2;
     private bool _b;
     public bool locked = true;
@@ -24,24 +22,22 @@ public class LauncheeScript : MonoBehaviour {
 
     private void Update() {
         if(locked) {
-            transform.localScale = Extensions.SharpInDamp(transform.localScale, _sizeVec, aimSpeed);
+            transform.localScale = Extensions.SharpInDamp(transform.localScale, _sizeVec, 1);
             transform.localPosition = barrelT.position;
             locked &= Vector3.Distance(_sizeVec, transform.localScale) >= 0.02f;
         } else {
-            gameObject.GetComponent<Rigidbody>().useGravity &= gravity;
             if(!_b) {
-                GetComponent<Rigidbody>().velocity = script.gameObject.GetComponent<Rigidbody>().velocity;
+                GetComponent<Rigidbody>().velocity = launcherScript.GetComponent<Rigidbody>().velocity;
                 transform.localPosition = barrelT.position;
                 GetComponent<Rigidbody>().AddForce(barrelT.transform.up * push * GetComponent<Rigidbody>().mass);
-                _t2 = t + 1;
+                _t2 = _t + 1;
                 _b = true;
             }
 
-            t -= Time.deltaTime;
-            Vector3 vv = Vector3.zero;
-            if(t < 0) {
-                transform.localScale = Vector3.SmoothDamp(transform.localScale, Vector3.zero, ref vv, 0.1f);
-            }
+            _t -= Time.deltaTime;
+
+            if(_t < 0)
+                transform.localScale = Extensions.SharpInDamp(transform.localScale, Vector3.zero, 1f);
 
             Destroy(gameObject, _t2);
         }
