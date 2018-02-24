@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+
+using UnityEditor;
 
 public static class MyMenuCommands {
     // Creates a menu in the Editor called "My Shortcuts" and adds an item called Redo with the shortcut key Ctrl+Shift+Z 
@@ -7,3 +9,5 @@ public static class MyMenuCommands {
         Undo.PerformRedo();
     }
 }
+
+#endif
